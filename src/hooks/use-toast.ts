@@ -1,3 +1,4 @@
+
 // This hook is used for toast notifications throughout the application
 import * as React from "react"
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
@@ -5,11 +6,17 @@ import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 const TOAST_LIMIT = 5
 const TOAST_REMOVE_DELAY = 1000000
 
-interface ToasterToast extends ToastProps {
+// Modified interface to avoid type conflicts
+interface ToasterToast {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  // Add all other properties from ToastProps
+  variant?: "default" | "destructive"
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  className?: string
 }
 
 const actionTypes = {
@@ -134,6 +141,7 @@ function dispatch(action: Action) {
   })
 }
 
+// Modified to match our ToasterToast interface
 interface Toast extends Omit<ToasterToast, "id"> {}
 
 function toast(props: Toast) {
