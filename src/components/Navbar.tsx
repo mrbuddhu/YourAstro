@@ -24,6 +24,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [balance, setBalance] = useState(0);
   const [user, setUser] = useState<any>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     // Check authentication status
@@ -74,25 +75,38 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
+      
+      // Clear any existing sessions
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      // Clear all local state
       setIsLoggedIn(false);
       setUser(null);
       setBalance(0);
-      navigate('/login');
       
+      // Clear any stored session data
+      localStorage.removeItem('supabase.auth.token');
+      
+      // Show success message
       toast({
         title: "Logged out successfully",
         description: "Come back soon!",
         variant: "default",
       });
+      
+      // Navigate to login page
+      navigate('/login');
     } catch (error: any) {
+      console.error('Logout error:', error);
       toast({
         title: "Error logging out",
-        description: error.message,
+        description: error.message || "Failed to logout. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -146,9 +160,13 @@ const Navbar = () => {
                   <span>Profile</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-500">
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="flex items-center gap-2 text-red-500"
+                disabled={isLoggingOut}
+              >
                 <LogOut size={14} />
-                <span>Logout</span>
+                <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

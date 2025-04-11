@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,19 +10,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail } from 'lucide-react';
+import { Mail, Loader2 } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
+      // Sign in with email and password
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -31,27 +35,36 @@ const LoginPage = () => {
 
       if (error) throw error;
 
-      // Check if user session exists
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) throw sessionError;
+      if (data.user) {
+        // Check user role to determine redirect
+        const { data: astrologerData } = await supabase
+          .from('astrologer_profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .single();
 
-      if (session) {
         toast({
           title: "Login Successful",
           description: "Welcome back to 123Astro!",
           variant: "default",
         });
 
-        // Redirect to astrologers page after successful login
-        window.location.href = '/astrologers';
+        // Redirect based on user role
+        if (astrologerData) {
+          navigate('/profile'); // Astrologer goes to their profile
+        } else {
+          navigate('/astrologers'); // Regular user goes to astrologers list
+        }
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,6 +90,7 @@ const LoginPage = () => {
                       className="celestial-input"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      disabled={isLoading}
                       required
                     />
                   </div>
@@ -95,12 +109,20 @@ const LoginPage = () => {
                       className="celestial-input"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      disabled={isLoading}
                       required
                     />
                   </div>
                   
-                  <Button type="submit" className="w-full star-button">
-                    Sign In
+                  <Button type="submit" className="w-full star-button" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                 </div>
               </form>

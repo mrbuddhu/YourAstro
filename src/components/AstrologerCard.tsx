@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, MessageCircle, PhoneCall, Languages } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface AstrologerProps {
   id: string;
@@ -20,6 +20,27 @@ export interface AstrologerProps {
 }
 
 const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
+  const { requireAuth } = useAuth();
+  const navigate = useNavigate();
+
+  const handleChatClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (requireAuth('start a chat consultation')) {
+      navigate(`/chat/${astrologer.id}`);
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleCallClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (requireAuth('start a voice call')) {
+      navigate(`/call/${astrologer.id}`);
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="cosmic-card overflow-hidden">
       {/* Online status badge */}
@@ -84,23 +105,19 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
               variant="outline" 
               size="sm" 
               className="border-astro-purple/30 hover:bg-astro-purple/10"
-              asChild
+              onClick={handleChatClick}
             >
-              <Link to={`/chat/${astrologer.id}`}>
-                <MessageCircle size={16} className="mr-1" />
-                Chat
-              </Link>
+              <MessageCircle size={16} className="mr-1" />
+              Chat
             </Button>
             
             <Button 
               size="sm"
               className="bg-astro-purple hover:bg-astro-lightPurple"
-              asChild
+              onClick={handleCallClick}
             >
-              <Link to={`/call/${astrologer.id}`}>
-                <PhoneCall size={16} className="mr-1" />
-                Call
-              </Link>
+              <PhoneCall size={16} className="mr-1" />
+              Call
             </Button>
           </div>
         </div>

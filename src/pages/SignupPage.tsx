@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,23 +12,40 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Phone, Mail, AlertCircle } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Phone, Mail, AlertCircle, User, Star, Loader2 } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [role, setRole] = useState<"user" | "astrologer">("user");
   const [acceptTerms, setAcceptTerms] = useState(false);
+  
+  // Additional fields for astrologers
+  const [experience, setExperience] = useState("");
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [bio, setBio] = useState("");
+  const [pricePerMin, setPricePerMin] = useState("");
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!acceptTerms) {
       toast({
         title: "Please accept terms",
@@ -39,102 +55,123 @@ const SignupPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
+      // Validate required fields for astrologers
+      if (role === "astrologer") {
+        if (!experience || !specialties.length || !languages.length || !bio || !pricePerMin) {
+          throw new Error("Please fill in all required fields for astrologer registration");
+        }
+      }
+
       // Create user account
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            full_name: name
+            full_name: name,
+            role: role,
+            phone: phone
           }
         }
       });
 
       if (authError) throw authError;
 
-      toast({
-        title: "Signup Successful",
-        description: "Please check your email for verification link.",
-        variant: "default",
-      });
+      if (authData.user) {
+        // Create profile in the appropriate table based on role
+        if (role === "astrologer") {
+          const { error: profileError } = await supabase
+            .from('astrologer_profiles')
+            .insert({
+              id: authData.user.id,
+              full_name: name,
+              email: email,
+              phone: phone,
+              experience: parseInt(experience),
+              specialties: specialties,
+              languages: languages,
+              bio: bio,
+              price_per_min: parseInt(pricePerMin),
+              is_verified: false,
+              is_online: false,
+              rating: 0,
+              total_consultations: 0
+            });
 
-      // Redirect to login page after successful signup
-      window.location.href = '/login';
+          if (profileError) throw profileError;
+        } else {
+          const { error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              id: authData.user.id,
+              full_name: name,
+              email: email,
+              phone: phone,
+              wallet_balance: 0
+            });
+
+          if (profileError) throw profileError;
+        }
+
+        toast({
+          title: "Signup Successful",
+          description: role === "astrologer" 
+            ? "Please wait for admin verification to start consulting."
+            : "Welcome to 123Astro! Please verify your email.",
+          variant: "default",
+        });
+
+        // Sign in the user automatically
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) throw signInError;
+
+        // Redirect based on role
+        navigate(role === "astrologer" ? '/profile' : '/astrologers');
+      }
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: error.message || "An error occurred during signup. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!acceptTerms) {
-      toast({
-        title: "Please accept terms",
-        description: "You must accept the terms and conditions to continue.",
-        variant: "destructive",
-      });
-      return;
-    }
+  const specialtyOptions = [
+    "Vedic Astrology",
+    "Numerology",
+    "Tarot Reading",
+    "Palmistry",
+    "Vastu",
+    "Horoscope Analysis",
+    "Relationship Counseling",
+    "Career Guidance",
+    "Marriage Compatibility",
+    "Gem Recommendations"
+  ];
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        phone,
-        options: {
-          data: {
-            full_name: name
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      setIsOtpSent(true);
-      toast({
-        title: "OTP Sent",
-        description: `A verification code has been sent to ${phone}`,
-        variant: "default",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Failed to Send OTP",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePhoneSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone,
-        token: otp,
-        type: 'signup'
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Signup Successful",
-        description: "Welcome to 123Astro!",
-        variant: "default",
-      });
-
-      // Redirect to home page after successful signup
-      window.location.href = '/';
-    } catch (error: any) {
-      toast({
-        title: "Verification Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
+  const languageOptions = [
+    "English",
+    "Hindi",
+    "Tamil",
+    "Telugu",
+    "Malayalam",
+    "Kannada",
+    "Bengali",
+    "Marathi",
+    "Gujarati",
+    "Punjabi"
+  ];
 
   return (
     <>
@@ -147,170 +184,194 @@ const SignupPage = () => {
               <CardDescription>Join 123Astro for personalized cosmic guidance</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="email">
-                <TabsList className="grid grid-cols-2 mb-6">
-                  <TabsTrigger value="email" className="flex items-center gap-2">
-                    <Mail size={16} />
-                    Email
-                  </TabsTrigger>
-                  <TabsTrigger value="phone" className="flex items-center gap-2">
-                    <Phone size={16} />
-                    Phone
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="email">
-                  <form onSubmit={handleEmailSignup}>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <label htmlFor="name" className="text-sm font-medium">Full Name</label>
-                        <Input
-                          id="name"
-                          type="text"
-                          placeholder="John Doe"
-                          className="celestial-input"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium">Email</label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="name@example.com"
-                          className="celestial-input"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <label htmlFor="password" className="text-sm font-medium">Password</label>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="••••••••"
-                          className="celestial-input"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                        />
-                        <p className="text-xs text-foreground/70">
-                          Password must be at least 8 characters long
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Checkbox 
-                          id="terms"
-                          checked={acceptTerms}
-                          onCheckedChange={(checked) => setAcceptTerms(checked === true)}
-                        />
-                        <label htmlFor="terms" className="text-sm text-foreground/70">
-                          I accept the <Link to="/terms" className="text-astro-purple hover:underline">Terms of Service</Link> and <Link to="/privacy-policy" className="text-astro-purple hover:underline">Privacy Policy</Link>
-                        </label>
-                      </div>
-                      
-                      <Button type="submit" className="w-full star-button">
-                        Create Account
+              <form onSubmit={handleEmailSignup}>
+                <div className="space-y-4">
+                  {/* Role Selection */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">I want to join as</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Button
+                        type="button"
+                        variant={role === "user" ? "default" : "outline"}
+                        className={role === "user" ? "star-button" : "border-astro-purple/30"}
+                        onClick={() => setRole("user")}
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        User
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={role === "astrologer" ? "default" : "outline"}
+                        className={role === "astrologer" ? "star-button" : "border-astro-purple/30"}
+                        onClick={() => setRole("astrologer")}
+                      >
+                        <Star className="mr-2 h-4 w-4" />
+                        Astrologer
                       </Button>
                     </div>
-                  </form>
-                </TabsContent>
-                
-                <TabsContent value="phone">
-                  <form onSubmit={isOtpSent ? handlePhoneSignup : handleSendOtp}>
-                    <div className="space-y-4">
+                  </div>
+
+                  {/* Common Fields */}
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium">Full Name</label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="John Doe"
+                      className="celestial-input"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium">Email</label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="name@example.com"
+                      className="celestial-input"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+91 9876543210"
+                      className="celestial-input"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="password" className="text-sm font-medium">Password</label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      className="celestial-input"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  {/* Astrologer-specific Fields */}
+                  {role === "astrologer" && (
+                    <>
                       <div className="space-y-2">
-                        <label htmlFor="name-phone" className="text-sm font-medium">Full Name</label>
+                        <label htmlFor="experience" className="text-sm font-medium">Years of Experience</label>
                         <Input
-                          id="name-phone"
-                          type="text"
-                          placeholder="John Doe"
+                          id="experience"
+                          type="number"
+                          placeholder="5"
                           className="celestial-input"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          value={experience}
+                          onChange={(e) => setExperience(e.target.value)}
                           required
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
-                        <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          placeholder="+91 9876543210"
-                          className="celestial-input"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          required
-                          disabled={isOtpSent}
-                        />
-                      </div>
-                      
-                      {isOtpSent && (
-                        <div className="space-y-2">
-                          <label htmlFor="otp" className="text-sm font-medium">
-                            Verification Code
-                          </label>
-                          <Input
-                            id="otp"
-                            type="text"
-                            placeholder="Enter 6-digit code"
-                            className="celestial-input"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            required
-                          />
-                          <p className="text-xs flex items-center gap-1 text-foreground/70">
-                            <AlertCircle size={12} />
-                            Didn't receive code? 
-                            <button 
-                              type="button" 
-                              onClick={handleSendOtp} 
-                              className="text-astro-purple hover:underline"
-                            >
-                              Resend
-                            </button>
-                          </p>
-                        </div>
-                      )}
-                      
-                      {!isOtpSent && (
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="terms-phone"
-                            checked={acceptTerms}
-                            onCheckedChange={(checked) => setAcceptTerms(checked === true)}
-                          />
-                          <label htmlFor="terms-phone" className="text-sm text-foreground/70">
-                            I accept the <Link to="/terms" className="text-astro-purple hover:underline">Terms of Service</Link> and <Link to="/privacy-policy" className="text-astro-purple hover:underline">Privacy Policy</Link>
-                          </label>
-                        </div>
-                      )}
-                      
-                      <Button type="submit" className="w-full star-button">
-                        {isOtpSent ? "Verify & Create Account" : "Send Verification Code"}
-                      </Button>
-                      
-                      {isOtpSent && (
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="w-full border-astro-purple/30 hover:bg-astro-purple/10"
-                          onClick={() => setIsOtpSent(false)}
+                        <label className="text-sm font-medium">Specialties</label>
+                        <Select
+                          value={specialties.join(",")}
+                          onValueChange={(value) => setSpecialties(value.split(","))}
                         >
-                          Change Phone Number
-                        </Button>
-                      )}
-                    </div>
-                  </form>
-                </TabsContent>
-              </Tabs>
+                          <SelectTrigger className="celestial-input">
+                            <SelectValue placeholder="Select your specialties" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {specialtyOptions.map((specialty) => (
+                              <SelectItem key={specialty} value={specialty}>
+                                {specialty}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Languages</label>
+                        <Select
+                          value={languages.join(",")}
+                          onValueChange={(value) => setLanguages(value.split(","))}
+                        >
+                          <SelectTrigger className="celestial-input">
+                            <SelectValue placeholder="Select languages you speak" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {languageOptions.map((language) => (
+                              <SelectItem key={language} value={language}>
+                                {language}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="bio" className="text-sm font-medium">Bio</label>
+                        <Textarea
+                          id="bio"
+                          placeholder="Tell us about your experience and expertise..."
+                          className="celestial-input min-h-[100px]"
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="pricePerMin" className="text-sm font-medium">Price per Minute (₹)</label>
+                        <Input
+                          id="pricePerMin"
+                          type="number"
+                          placeholder="20"
+                          className="celestial-input"
+                          value={pricePerMin}
+                          onChange={(e) => setPricePerMin(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={acceptTerms}
+                      onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                      disabled={isLoading}
+                    />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm text-muted-foreground"
+                    >
+                      I accept the terms and conditions
+                    </label>
+                  </div>
+                  
+                  <Button type="submit" className="w-full star-button" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      "Create Account"
+                    )}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
             <CardFooter className="flex justify-center">
               <p className="text-sm text-foreground/70">

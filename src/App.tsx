@@ -14,7 +14,10 @@ import ChatPage from "./pages/ChatPage";
 import CallPage from "./pages/CallPage";
 import HoroscopePage from "./pages/HoroscopePage";
 import WalletPage from "./pages/WalletPage";
+import AboutPage from "./pages/AboutPage";
+import ProfilePage from "./pages/ProfilePage";
 import * as React from 'react';
+import { useAuth } from './hooks/useAuth';
 
 console.log('App.tsx is being loaded');
 
@@ -54,22 +57,9 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setIsAuth(!!session);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuth(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  if (isAuth === null) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600"></div>
@@ -77,7 +67,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
   
-  return isAuth ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 // Create a client for React Query
@@ -112,6 +102,8 @@ const App = () => {
               <Route path="/call/:astrologerId" element={<ProtectedRoute><CallPage /></ProtectedRoute>} />
               <Route path="/horoscope" element={<HoroscopePage />} />
               <Route path="/wallet/add-funds" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/about" element={<AboutPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
