@@ -24,8 +24,8 @@ import { Search, Filter } from 'lucide-react';
 
 const AstrologersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [experienceFilter, setExperienceFilter] = useState("");
-  const [languageFilter, setLanguageFilter] = useState("");
+  const [experienceFilter, setExperienceFilter] = useState("any");
+  const [languageFilter, setLanguageFilter] = useState("any");
   const [sortOption, setSortOption] = useState("rating");
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   
@@ -37,7 +37,7 @@ const AstrologersPage = () => {
     }
     
     // Experience filter
-    if (experienceFilter) {
+    if (experienceFilter !== "any") {
       const minExperience = parseInt(experienceFilter.split("+")[0]);
       if (astrologer.experience < minExperience) {
         return false;
@@ -45,7 +45,7 @@ const AstrologersPage = () => {
     }
     
     // Language filter
-    if (languageFilter && !astrologer.languages.includes(languageFilter)) {
+    if (languageFilter !== "any" && !astrologer.languages.includes(languageFilter)) {
       return false;
     }
     
@@ -100,7 +100,7 @@ const AstrologersPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="">Any Experience</SelectItem>
+                    <SelectItem value="any">Any Experience</SelectItem>
                     <SelectItem value="5+">5+ Years</SelectItem>
                     <SelectItem value="10+">10+ Years</SelectItem>
                     <SelectItem value="15+">15+ Years</SelectItem>
@@ -114,7 +114,7 @@ const AstrologersPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="">Any Language</SelectItem>
+                    <SelectItem value="any">Any Language</SelectItem>
                     {uniqueLanguages.map(lang => (
                       <SelectItem key={lang} value={lang}>{lang}</SelectItem>
                     ))}
@@ -171,8 +171,8 @@ const AstrologersPage = () => {
                   variant="outline"
                   onClick={() => {
                     setSearchQuery("");
-                    setExperienceFilter("");
-                    setLanguageFilter("");
+                    setExperienceFilter("any");
+                    setLanguageFilter("any");
                     setShowOnlineOnly(false);
                   }}
                 >
