@@ -214,6 +214,20 @@ const ChatPage = () => {
       setChatSessionId(session.id);
       setIsRunning(true);
 
+      // Subscribe to real-time messages
+      const subscription = supabase
+        .channel(`chat_${session.id}`)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `chat_session_id=eq.${session.id}`
+        }, (payload) => {
+          const newMessage = payload.new;
+          setMessages((prev) => [...prev, newMessage]);
+        })
+        .subscribe();
+
       // Send welcome message
       const { error } = await supabase
         .from('messages')
@@ -225,9 +239,17 @@ const ChatPage = () => {
 
       if (error) {
         console.error('Error sending welcome message:', error);
+        toast({
+          title: "Error",
+          description: "Failed to send welcome message",
+          variant: "destructive"
+        });
       }
     } else {
       if (chatSessionId) {
+        // Unsubscribe from real-time updates
+        await supabase.channel(`chat_${chatSessionId}`).unsubscribe();
+
         const { error } = await supabase
           .from('chat_sessions')
           .update({
@@ -239,11 +261,18 @@ const ChatPage = () => {
 
         if (error) {
           console.error('Error ending chat session:', error);
+          toast({
+            title: "Error",
+            description: "Failed to end chat session",
+            variant: "destructive"
+          });
+          return;
         }
       }
 
       setIsRunning(false);
       setChatSessionId(null);
+      setMessages([]);
       toast({
         title: "Chat Ended",
         description: "Your chat session has been saved to your history.",
