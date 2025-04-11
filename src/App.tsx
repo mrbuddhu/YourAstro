@@ -10,6 +10,7 @@ import AstrologersPage from "./pages/AstrologersPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ChatPage from "./pages/ChatPage";
+import CallPage from "./pages/CallPage";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/chat/:astrologerId" element={<ChatPage />} />
+          <Route path="/call/:astrologerId" element={<CallPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
