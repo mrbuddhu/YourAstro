@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Moon, Sun, User, LogOut, Plus } from 'lucide-react';
 import { 
   Sheet,
@@ -14,20 +13,91 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 
 const Navbar = () => {
   const isMobile = useIsMobile();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock auth state
-  const [balance, setBalance] = useState(500); // Mock wallet balance
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [balance, setBalance] = useState(0);
+  const [user, setUser] = useState<any>(null);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+      if (session?.user) {
+        setUser(session.user);
+        // Fetch wallet balance
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('wallet_balance')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching wallet balance:', error);
+        } else if (profile) {
+          setBalance(profile.wallet_balance || 0);
+        }
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setIsLoggedIn(!!session);
+      if (session?.user) {
+        setUser(session.user);
+        // Fetch wallet balance
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('wallet_balance')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile) {
+          setBalance(profile.wallet_balance || 0);
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setIsLoggedIn(false);
+      setUser(null);
+      setBalance(0);
+      navigate('/login');
+      
+      toast({
+        title: "Logged out successfully",
+        description: "Come back soon!",
+        variant: "default",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error logging out",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleAddFunds = () => {
+    navigate('/wallet/add-funds');
   };
 
   const NavLinks = () => (
@@ -51,7 +121,12 @@ const Navbar = () => {
           <div className="bg-muted px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm">
             <span className="text-astro-gold">₹</span>
             <span>{balance}</span>
-            <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full bg-astro-purple/20">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6 rounded-full bg-astro-purple/20"
+              onClick={handleAddFunds}
+            >
               <Plus size={12} />
             </Button>
           </div>
@@ -59,8 +134,8 @@ const Navbar = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="rounded-full" size="icon">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback>US</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url || "/placeholder.svg"} />
+                  <AvatarFallback>{user?.user_metadata?.full_name?.[0] || 'U'}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -85,13 +160,13 @@ const Navbar = () => {
       <div className="flex gap-2">
         <Button 
           variant="outline" 
-          onClick={() => window.location.href = '/login'} 
+          onClick={() => navigate('/login')} 
           className="border-astro-purple/30 hover:bg-astro-purple/10"
         >
           Login
         </Button>
         <Button 
-          onClick={() => window.location.href = '/signup'} 
+          onClick={() => navigate('/signup')} 
           className="bg-gradient-to-r from-astro-purple to-astro-lightPurple hover:opacity-90"
         >
           Sign Up
