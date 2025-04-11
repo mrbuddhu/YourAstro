@@ -65,10 +65,13 @@ export default {
 				},
 				astro: {
 					darkBlue: '#0F172A',
-					purple: '#9D74C7',
-					lightPurple: '#8257E6',
-					gold: '#FFD700',
+					purple: '#FF7E1D',
+					lightPurple: '#FF5722',
+					gold: '#FFA41B',
 					silver: '#C0C0C0',
+					orange: '#FF5722',
+					lightOrange: '#FF7043',
+					deepOrange: '#E64A19'
 				}
 			},
 			borderRadius: {

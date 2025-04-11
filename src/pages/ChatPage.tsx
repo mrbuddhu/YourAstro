@@ -11,12 +11,13 @@ import { Send, ArrowLeft, Clock, Phone, Info, AlertCircle } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import { mockAstrologers } from "@/data/mockAstrologers";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   id: string;
   sender_id: string;
   content: string;
-  created_at: Date;
+  created_at: string;
   chat_session_id: string;
 }
 
@@ -104,10 +105,29 @@ const ChatPage = () => {
     getCurrentUser();
   }, []);
 
-  // Subscribe to messages
+  // Subscribe to messages and load existing messages
   useEffect(() => {
     if (!chatSessionId) return;
 
+    // Load existing messages
+    const loadMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('chat_session_id', chatSessionId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading messages:', error);
+        return;
+      }
+
+      setMessages(data || []);
+    };
+
+    loadMessages();
+
+    // Subscribe to new messages
     const channel = supabase
       .channel(`chat_${chatSessionId}`)
       .on('postgres_changes', {
@@ -152,6 +172,37 @@ const ChatPage = () => {
     }
 
     return data;
+  };
+
+  // Send message
+  const sendMessage = async (content: string) => {
+    if (!chatSessionId || !userId) return;
+
+    const { error } = await supabase
+      .from('messages')
+      .insert({
+        chat_session_id: chatSessionId,
+        sender_id: userId,
+        content: content
+      });
+
+    if (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle message submit
+  const handleMessageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    await sendMessage(newMessage);
+    setNewMessage("");
   };
 
   // Toggle chat session
@@ -211,7 +262,7 @@ const ChatPage = () => {
       .from('messages')
       .insert({
         chat_session_id: chatSessionId,
-        sender_id: 'user',
+        sender_id: userId,
         content: newMessage
       });
 
@@ -372,7 +423,7 @@ const ChatPage = () => {
                   
                   {/* Chat messages */}
                   {messages.map(message => {
-                    const isUser = message.senderId === "user";
+                    const isUser = message.sender_id === userId;
                     
                     return (
                       <div
@@ -382,7 +433,7 @@ const ChatPage = () => {
                         <div className={`max-w-[80%] ${isUser ? 'bg-astro-purple text-white' : 'bg-muted'} rounded-2xl px-4 py-2`}>
                           <p>{message.content}</p>
                           <p className={`text-xs mt-1 ${isUser ? 'text-white/70' : 'text-foreground/50'}`}>
-                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
                       </div>
@@ -421,19 +472,22 @@ const ChatPage = () => {
                   {astrologer.isOnline ? "Start Chat" : "Astrologer Offline"}
                 </Button>
               ) : (
-                <form onSubmit={handleSendMessage} className="flex gap-2">
+                <form onSubmit={handleMessageSubmit} className="flex items-center gap-2 w-full">
                   <Input
+                    type="text"
+                    placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type your message here..."
                     className="celestial-input flex-1"
+                    disabled={!isRunning}
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
+                    size="icon"
                     className="bg-astro-purple hover:bg-astro-lightPurple"
-                    disabled={newMessage.trim() === ""}
+                    disabled={!isRunning || !newMessage.trim()}
                   >
-                    <Send size={18} />
+                    <Send className="h-4 w-4" />
                   </Button>
                 </form>
               )}

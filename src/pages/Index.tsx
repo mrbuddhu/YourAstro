@@ -18,11 +18,11 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Star, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react';
 
 const Index = () => {
-  // Only display online astrologers and limit to 3
+  // Only display online astrologers and limit to 4
   const featuredAstrologers = mockAstrologers
     .filter(a => a.isOnline)
     .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3);
+    .slice(0, 4);
   
   return (
     <>
@@ -32,16 +32,18 @@ const Index = () => {
         <HeroSection />
         
         {/* Featured Astrologers */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto">
-            <div className="flex items-center justify-between mb-8">
+        <section className="py-16 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-pink-500/5" />
+          <div className="absolute inset-0 opacity-10 bg-[url('/backgrounds/mandala-pattern.svg')] bg-repeat bg-center" />
+          <div className="container mx-auto relative">
+            <div className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="text-2xl font-bold mb-2">Featured Astrologers</h2>
-                <p className="text-foreground/70">Connect with our top-rated astrologers available now</p>
+                <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Expert Astrologers</h2>
+                <p className="text-foreground/70 text-lg">Connect with our experienced astrologers for guidance</p>
               </div>
-              <Button variant="outline" asChild className="border-astro-purple/30 hover:bg-astro-purple/10">
-                <Link to="/astrologers" className="flex items-center">
-                  View All
+              <Button variant="outline" asChild className="border-orange-500/30 hover:bg-orange-500/10 transform hover:scale-105 transition-all duration-300">
+                <Link to="/astrologers" className="flex items-center text-lg">
+                  View All Astrologers
                   <ChevronRight size={16} className="ml-1" />
                 </Link>
               </Button>
@@ -56,23 +58,26 @@ const Index = () => {
         </section>
         
         {/* Services */}
-        <section className="py-16 bg-muted/30 px-4">
-          <div className="container mx-auto">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl font-bold mb-4">Our Cosmic Services</h2>
-              <p className="text-foreground/70">
-                Discover insights about your past, present, and future with our premium astrological services
+        <section className="py-16 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-pink-500/5 to-orange-500/5" />
+          <div className="absolute inset-0 opacity-10 bg-[url('/backgrounds/mandala-pattern.svg')] bg-repeat bg-center transform rotate-180" />
+          <div className="container mx-auto relative">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="w-20 h-20 mx-auto mb-6 opacity-20 bg-[url('/backgrounds/om-symbol.svg')] bg-contain bg-no-repeat bg-center" />
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Spiritual Services</h2>
+              <p className="text-foreground/70 text-lg">
+                Discover insights about your past, present, and future through our specialized astrology services
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="cosmic-card">
+              <Card className="cosmic-card border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
-                    <MessageCircle size={32} className="text-astro-purple" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 flex items-center justify-center">
+                    <MessageCircle size={32} className="text-orange-500" />
                   </div>
-                  <CardTitle>Chat Consultation</CardTitle>
-                  <CardDescription>Connect instantly via text chat</CardDescription>
+                  <CardTitle className="text-xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Chat Consultation</CardTitle>
+                  <CardDescription>Connect instantly through chat</CardDescription>
                 </CardHeader>
                 <Separator />
                 <CardContent className="pt-6">
@@ -100,15 +105,15 @@ const Index = () => {
                 </CardContent>
               </Card>
               
-              <Card className="cosmic-card relative overflow-hidden border-astro-purple">
-                <div className="absolute top-0 right-0 bg-astro-purple text-white text-xs px-3 py-1">
+              <Card className="cosmic-card relative overflow-hidden border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-sm px-4 py-1">
                   Most Popular
                 </div>
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
-                    <ShieldCheck size={32} className="text-astro-purple" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 flex items-center justify-center">
+                    <ShieldCheck size={32} className="text-orange-500" />
                   </div>
-                  <CardTitle>Voice Call</CardTitle>
+                  <CardTitle className="text-xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Voice Call</CardTitle>
                   <CardDescription>Personal voice consultation</CardDescription>
                 </CardHeader>
                 <Separator />
@@ -137,13 +142,13 @@ const Index = () => {
                 </CardContent>
               </Card>
               
-              <Card className="cosmic-card">
+              <Card className="cosmic-card border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
-                    <Sparkles size={32} className="text-astro-purple" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 flex items-center justify-center">
+                    <Sparkles size={32} className="text-orange-500" />
                   </div>
-                  <CardTitle>Remedies</CardTitle>
-                  <CardDescription>Personalized astrological solutions</CardDescription>
+                  <CardTitle className="text-xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Solutions</CardTitle>
+                  <CardDescription>Personalized astrological remedies</CardDescription>
                 </CardHeader>
                 <Separator />
                 <CardContent className="pt-6">

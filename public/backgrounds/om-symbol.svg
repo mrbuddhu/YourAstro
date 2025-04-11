@@ -1,0 +1,4 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <path d="M100,20 C130,20 155,45 155,75 C155,105 130,130 100,130 C70,130 45,105 45,75 C45,45 70,20 100,20 Z M100,35 C78,35 60,53 60,75 C60,97 78,115 100,115 C122,115 140,97 140,75 C140,53 122,35 100,35 Z M100,130 L100,160 M70,160 L130,160 M85,160 C85,180 115,180 115,160" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M100,50 C110,50 120,60 120,75 C120,90 110,100 100,100 M100,50 L100,100 M100,75 L120,75" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
