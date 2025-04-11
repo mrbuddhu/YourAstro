@@ -17,6 +17,7 @@ import { Phone, Mail, AlertCircle } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ const SignupPage = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
 
-  const handleEmailSignup = (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptTerms) {
       toast({
@@ -37,18 +38,39 @@ const SignupPage = () => {
       });
       return;
     }
-    
-    // This will be integrated with Supabase auth in the future
-    toast({
-      title: "Signup Functionality",
-      description: "This will be integrated with Supabase Auth in the future.",
-      variant: "default",
-    });
-    
-    console.log("Signup with email:", email, "password:", password, "name:", name);
+
+    try {
+      // Create user account
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      toast({
+        title: "Signup Successful",
+        description: "Please check your email for verification link.",
+        variant: "default",
+      });
+
+      // Redirect to login page after successful signup
+      window.location.href = '/login';
+    } catch (error: any) {
+      toast({
+        title: "Signup Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptTerms) {
       toast({
@@ -58,25 +80,60 @@ const SignupPage = () => {
       });
       return;
     }
-    
-    setIsOtpSent(true);
-    toast({
-      title: "OTP Sent",
-      description: `A verification code has been sent to ${phone}`,
-      variant: "default",
-    });
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        phone,
+        options: {
+          data: {
+            full_name: name
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      setIsOtpSent(true);
+      toast({
+        title: "OTP Sent",
+        description: `A verification code has been sent to ${phone}`,
+        variant: "default",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to Send OTP",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handlePhoneSignup = (e: React.FormEvent) => {
+  const handlePhoneSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be integrated with Supabase auth in the future
-    toast({
-      title: "Signup Functionality",
-      description: "This will be integrated with Supabase Auth in the future.",
-      variant: "default",
-    });
-    
-    console.log("Signup with phone:", phone, "OTP:", otp, "name:", name);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token: otp,
+        type: 'signup'
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Signup Successful",
+        description: "Welcome to 123Astro!",
+        variant: "default",
+      });
+
+      // Redirect to home page after successful signup
+      window.location.href = '/';
+    } catch (error: any) {
+      toast({
+        title: "Verification Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (

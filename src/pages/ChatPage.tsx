@@ -14,9 +14,20 @@ import { toast } from "@/components/ui/use-toast";
 
 interface Message {
   id: string;
-  senderId: string;
+  sender_id: string;
   content: string;
-  timestamp: Date;
+  created_at: Date;
+  chat_session_id: string;
+}
+
+interface ChatSession {
+  id: string;
+  astrologer_id: string;
+  user_id: string;
+  start_time: Date | null;
+  end_time: Date | null;
+  status: 'active' | 'ended';
+  duration_seconds: number;
 }
 
 const ChatPage = () => {
@@ -27,6 +38,8 @@ const ChatPage = () => {
   const [timer, setTimer] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [walletBalance, setWalletBalance] = useState(500);
+  const [chatSessionId, setChatSessionId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
   // Auto-scroll to bottom of chat
@@ -80,21 +93,106 @@ const ChatPage = () => {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
   
+  // Get current user
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUserId(session.user.id);
+      }
+    };
+    getCurrentUser();
+  }, []);
+
+  // Subscribe to messages
+  useEffect(() => {
+    if (!chatSessionId) return;
+
+    const channel = supabase
+      .channel(`chat_${chatSessionId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `chat_session_id=eq.${chatSessionId}`,
+      }, (payload) => {
+        const newMessage = payload.new as Message;
+        setMessages(prev => [...prev, newMessage]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [chatSessionId]);
+
+  // Create chat session
+  const createChatSession = async () => {
+    if (!userId || !astrologer) return null;
+
+    const { data, error } = await supabase
+      .from('chat_sessions')
+      .insert({
+        astrologer_id: astrologer.id,
+        user_id: userId,
+        status: 'active',
+        start_time: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating chat session:', error);
+      toast({
+        title: "Error Starting Chat",
+        description: "We couldn't start the chat session. Please try again.",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    return data;
+  };
+
   // Toggle chat session
-  const toggleChatSession = () => {
+  const toggleChatSession = async () => {
     if (!isRunning) {
-      // Welcome message from astrologer
-      const welcomeMessage: Message = {
-        id: `msg-${Date.now()}`,
-        senderId: astrologer?.id || "unknown",
-        content: `Hello, I'm ${astrologer?.name}. How can I assist you with your cosmic journey today?`,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, welcomeMessage]);
+      const session = await createChatSession();
+      if (!session) return;
+
+      setChatSessionId(session.id);
       setIsRunning(true);
+
+      // Send welcome message
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          chat_session_id: session.id,
+          sender_id: astrologer?.id || 'unknown',
+          content: `Hello, I'm ${astrologer?.name}. How can I assist you with your cosmic journey today?`
+        });
+
+      if (error) {
+        console.error('Error sending welcome message:', error);
+      }
     } else {
+      if (chatSessionId) {
+        const { error } = await supabase
+          .from('chat_sessions')
+          .update({
+            status: 'ended',
+            end_time: new Date().toISOString(),
+            duration_seconds: timer
+          })
+          .eq('id', chatSessionId);
+
+        if (error) {
+          console.error('Error ending chat session:', error);
+        }
+      }
+
       setIsRunning(false);
-      // Save chat to history would happen here in real implementation
+      setChatSessionId(null);
       toast({
         title: "Chat Ended",
         description: "Your chat session has been saved to your history.",
@@ -103,25 +201,34 @@ const ChatPage = () => {
   };
   
   // Send a new message
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === "" || !chatSessionId) return;
     
     // Add user message
-    const userMessage: Message = {
-      id: `msg-${Date.now()}`,
-      senderId: "user",
-      content: newMessage,
-      timestamp: new Date()
-    };
+    const { error: sendError } = await supabase
+      .from('messages')
+      .insert({
+        chat_session_id: chatSessionId,
+        sender_id: 'user',
+        content: newMessage
+      });
+
+    if (sendError) {
+      console.error('Error sending message:', sendError);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    setMessages(prev => [...prev, userMessage]);
     setNewMessage("");
     
     // Simulate astrologer response after delay
-    setTimeout(() => {
-      // Mock responses
+    setTimeout(async () => {
       const responses = [
         "I see Saturn's influence in your query. Let me analyze this further...",
         "The alignment of Venus suggests positive energy in your relationships.",
@@ -132,14 +239,17 @@ const ChatPage = () => {
       
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       
-      const astrologerMessage: Message = {
-        id: `msg-${Date.now()}`,
-        senderId: astrologer?.id || "unknown",
-        content: randomResponse,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, astrologerMessage]);
+      const { error: responseError } = await supabase
+        .from('messages')
+        .insert({
+          chat_session_id: chatSessionId,
+          sender_id: astrologer?.id || 'unknown',
+          content: randomResponse
+        });
+
+      if (responseError) {
+        console.error('Error sending astrologer response:', responseError);
+      }
     }, 1500);
   };
   

@@ -16,6 +16,7 @@ import { Phone, Mail, AlertCircle } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -24,39 +25,83 @@ const LoginPage = () => {
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be integrated with Supabase auth in the future
-    toast({
-      title: "Login Functionality",
-      description: "This will be integrated with Supabase Auth in the future.",
-      variant: "default",
-    });
-    
-    console.log("Login with email:", email, "password:", password);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to 123Astro!",
+        variant: "default",
+      });
+
+      // Redirect to home page after successful login
+      window.location.href = '/';
+    } catch (error: any) {
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsOtpSent(true);
-    // This will be integrated with Supabase auth in the future
-    toast({
-      title: "OTP Sent",
-      description: `A verification code has been sent to ${phone}`,
-      variant: "default",
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        phone,
+      });
+
+      if (error) throw error;
+
+      setIsOtpSent(true);
+      toast({
+        title: "OTP Sent",
+        description: `A verification code has been sent to ${phone}`,
+        variant: "default",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to Send OTP",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handlePhoneLogin = (e: React.FormEvent) => {
+  const handlePhoneLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be integrated with Supabase auth in the future
-    toast({
-      title: "Login Functionality",
-      description: "This will be integrated with Supabase Auth in the future.",
-      variant: "default",
-    });
-    
-    console.log("Login with phone:", phone, "OTP:", otp);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token: otp,
+        type: 'sms'
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to 123Astro!",
+        variant: "default",
+      });
+
+      // Redirect to home page after successful login
+      window.location.href = '/';
+    } catch (error: any) {
+      toast({
+        title: "Verification Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
