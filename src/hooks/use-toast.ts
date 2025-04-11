@@ -1,14 +1,11 @@
-
-// This is required because the import in src/components/ui/use-toast.ts
-// points to this hook but it doesn't exist yet
-import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast"
-
+// This hook is used for toast notifications throughout the application
 import * as React from "react"
+import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 5
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = Toast & {
+interface ToasterToast extends ToastProps {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
@@ -137,9 +134,9 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+interface Toast extends Omit<ToasterToast, "id"> {}
 
-function toast({ ...props }: Toast) {
+function toast(props: Toast) {
   const id = genId()
 
   const update = (props: ToasterToast) =>

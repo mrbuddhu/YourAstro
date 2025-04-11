@@ -11,13 +11,24 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ChatPage from "./pages/ChatPage";
 
-const queryClient = new QueryClient();
+// Create a client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      {/* Toast notifications */}
       <Toaster />
-      <Sonner />
+      <Sonner position="top-right" closeButton theme="light" />
+      
+      {/* Application Routes */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
