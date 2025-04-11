@@ -1,13 +1,243 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import AstrologerCard from "@/components/AstrologerCard";
+import { mockAstrologers } from "@/data/mockAstrologers";
+import { Button } from "@/components/ui/button";
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Link } from 'react-router-dom';
+import { ChevronRight, Star, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react';
 
 const Index = () => {
+  // Only display online astrologers and limit to 3
+  const featuredAstrologers = mockAstrologers
+    .filter(a => a.isOnline)
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 3);
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      <Navbar />
+      
+      <main>
+        <HeroSection />
+        
+        {/* Featured Astrologers */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Featured Astrologers</h2>
+                <p className="text-foreground/70">Connect with our top-rated astrologers available now</p>
+              </div>
+              <Button variant="outline" asChild className="border-astro-purple/30 hover:bg-astro-purple/10">
+                <Link to="/astrologers" className="flex items-center">
+                  View All
+                  <ChevronRight size={16} className="ml-1" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredAstrologers.map((astrologer) => (
+                <AstrologerCard key={astrologer.id} astrologer={astrologer} />
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Services */}
+        <section className="py-16 bg-muted/30 px-4">
+          <div className="container mx-auto">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl font-bold mb-4">Our Cosmic Services</h2>
+              <p className="text-foreground/70">
+                Discover insights about your past, present, and future with our premium astrological services
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="cosmic-card">
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
+                    <MessageCircle size={32} className="text-astro-purple" />
+                  </div>
+                  <CardTitle>Chat Consultation</CardTitle>
+                  <CardDescription>Connect instantly via text chat</CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Instant connectivity</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Private & confidential</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Detailed text guidance</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Chat history saved</span>
+                    </li>
+                  </ul>
+                  <Button className="w-full mt-6 star-button" asChild>
+                    <Link to="/astrologers">Start Chat</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="cosmic-card relative overflow-hidden border-astro-purple">
+                <div className="absolute top-0 right-0 bg-astro-purple text-white text-xs px-3 py-1">
+                  Most Popular
+                </div>
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
+                    <ShieldCheck size={32} className="text-astro-purple" />
+                  </div>
+                  <CardTitle>Voice Call</CardTitle>
+                  <CardDescription>Personal voice consultation</CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Direct conversation</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Deeper personal connection</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Instant clarifications</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Call recordings available</span>
+                    </li>
+                  </ul>
+                  <Button className="w-full mt-6 star-button" asChild>
+                    <Link to="/astrologers">Book Call</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="cosmic-card">
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-astro-purple/20 flex items-center justify-center">
+                    <Sparkles size={32} className="text-astro-purple" />
+                  </div>
+                  <CardTitle>Remedies</CardTitle>
+                  <CardDescription>Personalized astrological solutions</CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="pt-6">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Custom remedial measures</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Planetary appeasement</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Gemstone recommendations</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star size={16} className="text-astro-gold" />
+                      <span>Ritual guidance</span>
+                    </li>
+                  </ul>
+                  <Button className="w-full mt-6 bg-muted hover:bg-muted/80" disabled>
+                    Coming Soon
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+        
+        {/* Testimonials */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl font-bold mb-4">What Our Clients Say</h2>
+              <p className="text-foreground/70">
+                Real stories from people who found guidance through our platform
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  name: "Priya Sharma",
+                  testimony: "The guidance I received was life-changing. My astrologer provided insights that helped me make crucial career decisions.",
+                  rating: 5
+                },
+                {
+                  name: "Rahul Mehta",
+                  testimony: "I was skeptical at first, but the accuracy of the predictions was astonishing. I've been consulting regularly for the past 6 months.",
+                  rating: 5
+                },
+                {
+                  name: "Anjali Patel",
+                  testimony: "The relationship advice from my astrologer helped me understand my partner better. Our communication has improved significantly.",
+                  rating: 4
+                }
+              ].map((testimonial, index) => (
+                <Card key={index} className="cosmic-card">
+                  <CardContent className="pt-6">
+                    <div className="flex mb-4">
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={18}
+                          className={i < testimonial.rating ? "fill-astro-gold text-astro-gold" : "text-muted-foreground"}
+                        />
+                      ))}
+                    </div>
+                    <p className="mb-4 italic">"{testimonial.testimony}"</p>
+                    <p className="font-medium">{testimonial.name}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 px-4 bg-gradient-to-r from-astro-darkBlue to-astro-purple">
+          <div className="container mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Begin Your Cosmic Journey Today</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              Get answers to life's most important questions with guidance from our experienced astrologers.
+            </p>
+            <Button size="lg" className="star-button text-lg px-8 py-6" asChild>
+              <Link to="/signup">Create Your Free Account</Link>
+            </Button>
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
+    </>
   );
 };
 

@@ -1,73 +1,26 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 222 47% 11%;
+    --foreground: 226 100% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 262 59% 62%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 260 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 215 27.9% 16.9%;
     --muted-foreground: 215 20.2% 65.1%;
 
     --accent: 217.2 32.6% 17.5%;
@@ -78,15 +31,18 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --ring: 260 60% 52%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 262 83.3% 57.8%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 13% 15%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 220 13% 15%;
+    --sidebar-ring: 262 83.3% 57.8%;
   }
 }
 
@@ -97,5 +53,90 @@
 
   body {
     @apply bg-background text-foreground;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
+
+  .cosmic-card {
+    @apply bg-card/80 backdrop-blur-sm border border-purple-500/20 rounded-xl shadow-lg;
+  }
+
+  .star {
+    @apply absolute rounded-full bg-white;
+    box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.4);
+    animation: twinkle 4s infinite ease-in-out;
+  }
+
+  .star-sm {
+    @apply w-1 h-1;
+    animation-delay: 0s;
+  }
+
+  .star-md {
+    @apply w-1.5 h-1.5;
+    animation-delay: 0.3s;
+  }
+
+  .star-lg {
+    @apply w-2 h-2;
+    animation-delay: 0.5s;
+  }
+}
+
+@layer components {
+  .astro-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-astro-purple to-astro-lightPurple;
+  }
+
+  .cosmic-border {
+    @apply border border-astro-purple/30 rounded-xl;
+  }
+
+  .cosmic-glow {
+    @apply relative;
+  }
+  
+  .cosmic-glow::before {
+    content: '';
+    @apply absolute -inset-0.5 bg-gradient-to-r from-astro-purple/50 to-astro-lightPurple/50 rounded-[inherit] blur opacity-70 -z-10 transition-all duration-700;
+  }
+  
+  .cosmic-glow:hover::before {
+    @apply opacity-100;
+  }
+
+  .star-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-astro-purple to-astro-lightPurple text-white font-medium py-2.5 px-5 rounded-lg shadow-lg hover:shadow-astro-purple/50 transition-all duration-300;
+  }
+
+  .star-button::after {
+    content: '';
+    @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
+  }
+
+  .star-button:hover::after {
+    @apply opacity-10;
+  }
+
+  .celestial-input {
+    @apply bg-muted/50 border border-border/50 rounded-lg px-4 py-2 text-foreground focus:ring-2 focus:ring-astro-purple/50 focus:border-astro-purple/50 outline-none transition-all duration-300;
+  }
+}
+
+/* Custom scrollbar for browsers that support it */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(157, 116, 199, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 116, 199, 0.8);
 }
