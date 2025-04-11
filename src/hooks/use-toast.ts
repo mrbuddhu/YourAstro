@@ -6,7 +6,7 @@ import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 const TOAST_LIMIT = 5
 const TOAST_REMOVE_DELAY = 1000000
 
-// Modified interface to avoid type conflicts
+// Modified interface to properly handle types
 interface ToasterToast {
   id: string
   title?: React.ReactNode
@@ -141,8 +141,16 @@ function dispatch(action: Action) {
   })
 }
 
-// Modified to match our ToasterToast interface
-interface Toast extends Omit<ToasterToast, "id"> {}
+// Use a simple interface that matches our needed structure
+interface Toast {
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+  variant?: "default" | "destructive"
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  className?: string
+}
 
 function toast(props: Toast) {
   const id = genId()
