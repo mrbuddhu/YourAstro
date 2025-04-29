@@ -1,108 +1,117 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Search, Star, Sun, Moon, PhoneCall } from 'lucide-react';
+import { PhoneCall, Sparkles, Star, Sun, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <div className="relative min-h-[90vh] overflow-hidden flex items-center bg-gradient-to-b from-background to-background/95">
-      {/* Mandala Background Pattern */}
-      <div className="absolute inset-0 z-0 opacity-10 bg-[url('/backgrounds/mandala-pattern.svg')] bg-repeat bg-center" />
+    <div className="relative min-h-[90vh] overflow-hidden flex items-center bg-gradient-to-b from-orange-50 to-purple-50">
+      {/* Ethnic Background Patterns */}
+      <div className="absolute inset-0 z-0 opacity-5 bg-[url('/backgrounds/mandala-pattern.svg')] bg-repeat bg-center" />
       
-      {/* Decorative elements */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Animated stars */}
-        {Array.from({ length: 50 }).map((_, index) => {
-          const size = Math.random() > 0.8 ? 'star-lg' : Math.random() > 0.5 ? 'star-md' : 'star-sm';
-          return (
-            <div
-              key={index}
-              className={`star ${size}`}
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-              }}
-            />
-          );
-        })}
+      {/* Decorative Elements */}
+      <div className="absolute top-20 right-20 w-72 h-72 rounded-full bg-gradient-to-br from-orange-200/20 to-purple-200/20 blur-3xl animate-float" />
+      <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full bg-gradient-to-br from-purple-200/20 to-orange-200/20 blur-3xl animate-float-delayed" />
+      
+      {/* Sacred Geometry Elements */}
+      <div className="absolute right-0 top-1/4 w-64 h-64 opacity-10">
+        <img src="/backgrounds/sacred-geometry.svg" alt="" className="w-full h-full" />
       </div>
-      
-      {/* Translucent planets/orbs */}
-      <div className="absolute top-1/4 -right-20 w-64 h-64 rounded-full bg-astro-purple/10 animate-float" 
-           style={{ animationDelay: '0.5s' }} />
-      <div className="absolute bottom-1/4 -left-16 w-48 h-48 rounded-full bg-astro-lightPurple/10 animate-float"
-           style={{ animationDelay: '2s' }} />
-      
+      <div className="absolute left-0 bottom-1/4 w-64 h-64 opacity-10 rotate-180">
+        <img src="/backgrounds/sacred-geometry.svg" alt="" className="w-full h-full" />
+      </div>
+
       <div className="container relative z-10 mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="relative">
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-32 h-32 opacity-20 bg-[url('/backgrounds/om-symbol.svg')] bg-contain bg-no-repeat bg-center" />
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">YourAstro</span>
-              <span className="block mt-4 text-3xl md:text-4xl text-foreground/80">Your Gateway to Cosmic Wisdom</span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-foreground/80 mb-10">
-              Connect with India's most trusted astrologers and find
-              answers to all your life's questions
-            </p>
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Om Symbol */}
+          <div className="relative mb-8">
+            <div className="w-24 h-24 mx-auto">
+              <img src="/backgrounds/om-symbol.svg" alt="Om" className="w-full h-full opacity-90" />
+            </div>
           </div>
+
+          {/* Main Content */}
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-orange-600 via-purple-600 to-orange-600 bg-clip-text text-transparent">
+              YourAstro
+            </span>
+            <span className="block mt-4 text-3xl md:text-4xl text-gray-800">
+              Discover Your Cosmic Path
+            </span>
+          </h1>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Connect with India's most trusted astrologers and unlock the ancient wisdom of Vedic astrology
+          </p>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button 
-              className="star-button text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300"
+              className="text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 text-white shadow-lg"
               asChild
             >
               <Link to="/astrologers" className="flex items-center">
                 <PhoneCall className="mr-2 h-5 w-5" />
-                Call Now
+                Start Consultation
               </Link>
             </Button>
             
             <Button 
               variant="outline" 
-              className="text-lg border-orange-500/30 hover:bg-orange-500/10 px-8 py-6 transform hover:scale-105 transition-all duration-300"
+              className="text-lg border-2 border-orange-500/30 text-gray-800 hover:bg-orange-50 px-8 py-6 transform hover:scale-105 transition-all duration-300"
               asChild
             >
-              <Link to="/chat" className="flex items-center">
+              <Link to="/horoscope" className="flex items-center">
                 <Star className="mr-2 h-5 w-5" />
-                Chat Now
+                Daily Horoscope
               </Link>
             </Button>
           </div>
           
-          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="cosmic-card p-6 border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm">
-              <div className="flex justify-center mb-2">
-                <Star className="h-6 w-6 text-orange-500" />
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-purple-100 rounded-lg transform rotate-6 group-hover:rotate-12 transition-transform duration-300"></div>
+              <div className="relative p-6 bg-white rounded-lg shadow-sm border border-orange-100">
+                <div className="flex justify-center mb-2">
+                  <Star className="h-8 w-8 text-orange-500" />
+                </div>
+                <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">500+</h3>
+                <p className="text-sm text-gray-600">Expert Astrologers</p>
               </div>
-              <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">500+</h3>
-              <p className="text-sm text-foreground/70">Expert Astrologers</p>
             </div>
             
-            <div className="cosmic-card p-6 border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm">
-              <div className="flex justify-center mb-2">
-                <Sun className="h-6 w-6 text-orange-500" />
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-purple-100 rounded-lg transform rotate-6 group-hover:rotate-12 transition-transform duration-300"></div>
+              <div className="relative p-6 bg-white rounded-lg shadow-sm border border-orange-100">
+                <div className="flex justify-center mb-2">
+                  <Sun className="h-8 w-8 text-orange-500" />
+                </div>
+                <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">24/7</h3>
+                <p className="text-sm text-gray-600">Service Available</p>
               </div>
-              <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">24/7</h3>
-              <p className="text-sm text-foreground/70">Service Available</p>
             </div>
             
-            <div className="cosmic-card p-6 border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm">
-              <div className="flex justify-center mb-2">
-                <Moon className="h-6 w-6 text-orange-500" />
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-purple-100 rounded-lg transform rotate-6 group-hover:rotate-12 transition-transform duration-300"></div>
+              <div className="relative p-6 bg-white rounded-lg shadow-sm border border-orange-100">
+                <div className="flex justify-center mb-2">
+                  <Moon className="h-8 w-8 text-orange-500" />
+                </div>
+                <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">10K+</h3>
+                <p className="text-sm text-gray-600">Daily Consultations</p>
               </div>
-              <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">10K+</h3>
-              <p className="text-sm text-foreground/70">Daily Consultations</p>
             </div>
             
-            <div className="cosmic-card p-6 border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-pink-500/5 backdrop-blur-sm">
-              <div className="flex justify-center mb-2">
-                <PhoneCall className="h-6 w-6 text-orange-500" />
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-purple-100 rounded-lg transform rotate-6 group-hover:rotate-12 transition-transform duration-300"></div>
+              <div className="relative p-6 bg-white rounded-lg shadow-sm border border-orange-100">
+                <div className="flex justify-center mb-2">
+                  <Sparkles className="h-8 w-8 text-orange-500" />
+                </div>
+                <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">4.8</h3>
+                <p className="text-sm text-gray-600">Client Rating</p>
               </div>
-              <h3 className="font-bold text-2xl bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">4.8</h3>
-              <p className="text-sm text-foreground/70">Client Rating</p>
             </div>
           </div>
         </div>

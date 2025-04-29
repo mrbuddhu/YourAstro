@@ -1,8 +1,7 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, MessageCircle, PhoneCall, Languages } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MessageCircle, PhoneCall } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -10,6 +9,7 @@ export interface AstrologerProps {
   id: string;
   name: string;
   image: string;
+  gender: 'male' | 'female';
   rating: number;
   reviewCount: number;
   experience: number;
@@ -18,6 +18,12 @@ export interface AstrologerProps {
   pricePerMin: number;
   isOnline: boolean;
 }
+
+const getDefaultImage = (gender: 'male' | 'female') => {
+  return gender === 'male' 
+    ? 'https://img.freepik.com/free-photo/indian-man-traditional-turban-professional-portrait_23-2149416213.jpg'
+    : 'https://img.freepik.com/free-photo/young-indian-woman-wearing-traditional-clothes_23-2149416229.jpg';
+};
 
 const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
   const { requireAuth } = useAuth();
@@ -42,84 +48,78 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
   };
 
   return (
-    <div className="cosmic-card overflow-hidden">
-      {/* Online status badge */}
-      {astrologer.isOnline && (
-        <div className="absolute top-4 right-4 z-10">
-          <Badge className="bg-green-500 hover:bg-green-600">Online Now</Badge>
+    <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex items-start gap-4">
+        {/* Avatar with online indicator */}
+        <div className="relative">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-purple-100 p-0.5">
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <img 
+                src={astrologer.image || getDefaultImage(astrologer.gender)} 
+                alt={`${astrologer.name} - Indian Astrologer`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = getDefaultImage(astrologer.gender);
+                }}
+              />
+            </div>
+          </div>
+          {astrologer.isOnline && (
+            <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+          )}
         </div>
-      )}
-      
-      <div className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="h-20 w-20 border-2 border-astro-purple/30">
-            <AvatarImage src={astrologer.image} alt={astrologer.name} />
-            <AvatarFallback className="bg-astro-purple/20">
-              {astrologer.name.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-medium">{astrologer.name}</h3>
-              <div className="flex items-center gap-1">
-                <Star size={16} className="fill-astro-gold text-astro-gold" />
-                <span className="font-medium">{astrologer.rating}</span>
-                <span className="text-sm text-foreground/70">({astrologer.reviewCount})</span>
-              </div>
+
+        {/* Info */}
+        <div className="flex-1">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="text-lg font-semibold bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
+                {astrologer.name}
+              </h3>
+              <p className="text-sm text-gray-600">{astrologer.experience} years experience</p>
+              <p className="text-sm text-gray-600">{astrologer.languages.join(', ')}</p>
             </div>
-            
-            <div className="mt-2 flex flex-wrap gap-2">
-              <span className="text-sm px-2 py-0.5 bg-astro-purple/10 rounded-full">
-                {astrologer.experience} yrs
+          </div>
+
+          <div className="mt-2">
+            {astrologer.specialties.slice(0, 3).map((specialty, index) => (
+              <span 
+                key={index} 
+                className="inline-block text-sm bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full mr-2 mb-1"
+              >
+                {specialty}
               </span>
-              <span className="flex items-center gap-1 text-sm px-2 py-0.5 bg-astro-purple/10 rounded-full">
-                <Languages size={12} />
-                {astrologer.languages.join(', ')}
-              </span>
-            </div>
-            
-            <div className="mt-3 flex flex-wrap gap-1">
-              {astrologer.specialties.slice(0, 3).map((specialty, index) => (
-                <Badge key={index} variant="secondary" className="bg-muted text-foreground/70">
-                  {specialty}
-                </Badge>
-              ))}
-              {astrologer.specialties.length > 3 && (
-                <Badge variant="secondary" className="bg-muted text-foreground/70">
-                  +{astrologer.specialties.length - 3}
-                </Badge>
-              )}
-            </div>
+            ))}
           </div>
         </div>
-        
-        <div className="mt-6 flex justify-between items-center">
-          <div>
-            <p className="text-xs text-foreground/70">Price</p>
-            <p className="font-bold text-astro-gold">₹{astrologer.pricePerMin}/min</p>
-          </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500">Price</p>
+          <p className="font-semibold text-orange-500">₹{astrologer.pricePerMin}/min</p>
+        </div>
+
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            size="sm"
+            onClick={handleChatClick}
+            className="border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-colors"
+          >
+            <MessageCircle size={16} className="mr-1 text-orange-600" />
+            Chat
+          </Button>
           
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="border-astro-purple/30 hover:bg-astro-purple/10"
-              onClick={handleChatClick}
-            >
-              <MessageCircle size={16} className="mr-1" />
-              Chat
-            </Button>
-            
-            <Button 
-              size="sm"
-              className="bg-astro-purple hover:bg-astro-lightPurple"
-              onClick={handleCallClick}
-            >
-              <PhoneCall size={16} className="mr-1" />
-              Call
-            </Button>
-          </div>
+          <Button 
+            size="sm"
+            onClick={handleCallClick}
+            className="bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white transition-all duration-300"
+          >
+            <PhoneCall size={16} className="mr-1" />
+            Call
+          </Button>
         </div>
       </div>
     </div>
