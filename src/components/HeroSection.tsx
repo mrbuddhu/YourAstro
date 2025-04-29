@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Search, Star, Sun, Moon, PhoneCall } from 'lucide-react';
@@ -39,9 +38,9 @@ const HeroSection = () => {
         <div className="max-w-3xl mx-auto text-center">
           <div className="relative">
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-32 h-32 opacity-20 bg-[url('/backgrounds/om-symbol.svg')] bg-contain bg-no-repeat bg-center" />
-            <h1 className="text-4xl md:text-6xl font-bold mb-8 leading-tight">
-              <span className="astro-gradient-text">Your Future,</span>
-              <span className="block mt-2">Our Expertise</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+              <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">YourAstro</span>
+              <span className="block mt-4 text-3xl md:text-4xl text-foreground/80">Your Gateway to Cosmic Wisdom</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-foreground/80 mb-10">

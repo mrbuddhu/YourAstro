@@ -199,12 +199,12 @@ const Navbar = () => {
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 relative">
-              <div className="absolute inset-0 bg-astro-purple/20 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 bg-astro-purple/20 rounded-full"></div>
               <div className="absolute inset-1 bg-gradient-to-r from-astro-purple to-astro-lightPurple rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">123</span>
+                <span className="text-white font-bold">YA</span>
               </div>
             </div>
-            <span className="font-bold text-xl astro-gradient-text">123Astro</span>
+            <span className="font-bold text-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">YourAstro</span>
           </Link>
           {!isMobile && <NavLinks />}
         </div>

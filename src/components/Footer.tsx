@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone } from 'lucide-react';
@@ -13,10 +12,10 @@ const Footer = () => {
               <div className="w-8 h-8 relative">
                 <div className="absolute inset-0 bg-astro-purple/20 rounded-full"></div>
                 <div className="absolute inset-1 bg-gradient-to-r from-astro-purple to-astro-lightPurple rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">123</span>
+                  <span className="text-white font-bold">YA</span>
                 </div>
               </div>
-              <span className="font-bold text-xl astro-gradient-text">123Astro</span>
+              <span className="font-bold text-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">YourAstro</span>
             </Link>
             
             <p className="mt-4 text-sm text-foreground/70">
@@ -95,7 +94,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-foreground/70">
                 <Mail size={16} />
-                <span>support@123astro.com</span>
+                <span>support@yourastro.com</span>
               </li>
             </ul>
           </div>
@@ -103,7 +102,7 @@ const Footer = () => {
         
         <div className="border-t border-border/10 mt-10 pt-6 text-center">
           <p className="text-sm text-foreground/60">
-            © {new Date().getFullYear()} 123Astro. All rights reserved.
+            © {new Date().getFullYear()} YourAstro. All rights reserved.
           </p>
         </div>
       </div>
