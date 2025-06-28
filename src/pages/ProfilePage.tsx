@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import {
   Card,
   CardContent,
@@ -18,34 +18,27 @@ import {
 } from "@/components/ui/card";
 import { Loader2 } from 'lucide-react';
 
-interface UserProfile {
+interface Profile {
   id: string;
   full_name: string;
   email: string;
   phone: string;
   wallet_balance: number;
-}
-
-interface AstrologerProfile {
-  id: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  experience: number;
-  specialties: string[];
-  languages: string[];
-  bio: string;
-  price_per_min: number;
-  is_verified: boolean;
-  rating: number;
-  total_consultations: number;
+  user_type: 'user' | 'astrologer';
+  experience?: number;
+  specialties?: string[];
+  languages?: string[];
+  bio?: string;
+  price_per_min?: number;
+  is_verified?: boolean;
+  rating?: number;
+  total_consultations?: number;
 }
 
 const ProfilePage = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | AstrologerProfile | null>(null);
-  const [isAstrologer, setIsAstrologer] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<any>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -55,33 +48,51 @@ const ProfilePage = () => {
       if (!user) return;
 
       try {
-        // First check if user is an astrologer
-        const { data: astrologerData, error: astrologerError } = await supabase
-          .from('astrologer_profiles')
+        // Fetch from unified profiles table
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single();
 
-        if (astrologerData) {
-          setProfile(astrologerData);
-          setIsAstrologer(true);
-          setEditForm(astrologerData);
-          return;
+        if (profileData) {
+          setProfile(profileData);
+          setEditForm(profileData);
+        } else {
+          // Create profile if it doesn't exist
+          const newProfile = {
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+            email: user.email || '',
+            phone: '',
+            wallet_balance: 0,
+            user_type: 'user'
+          };
+
+          const { data: createdProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+
+          if (createdProfile) {
+            setProfile(createdProfile);
+            setEditForm(createdProfile);
+          }
+
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            toast({
+              title: "Error",
+              description: "Failed to create profile",
+              variant: "destructive",
+            });
+          }
         }
 
-        // If not an astrologer, fetch user profile
-        const { data: userData, error: userError } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (userData) {
-          setProfile(userData);
-          setEditForm(userData);
+        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is "not found"
+          throw profileError;
         }
-
-        if (userError) throw userError;
       } catch (error: any) {
         console.error('Error fetching profile:', error);
         toast({
@@ -106,13 +117,12 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user || !profile) return;
     
     setIsSaving(true);
     try {
-      const table = isAstrologer ? 'astrologer_profiles' : 'user_profiles';
       const { error } = await supabase
-        .from(table)
+        .from('profiles')
         .update(editForm)
         .eq('id', user.id);
 
@@ -160,7 +170,7 @@ const ProfilePage = () => {
               <div>
                 <CardTitle className="text-2xl">Profile Settings</CardTitle>
                 <CardDescription>
-                  {isAstrologer ? "Manage your astrologer profile" : "Manage your account settings"}
+                  {profile?.user_type === 'astrologer' ? "Manage your astrologer profile" : "Manage your account settings"}
                 </CardDescription>
               </div>
               {!isEditing ? (
@@ -184,15 +194,15 @@ const ProfilePage = () => {
                     <AvatarImage src={user?.user_metadata?.avatar_url || "/placeholder.svg"} />
                     <AvatarFallback>{profile.full_name?.[0] || 'U'}</AvatarFallback>
                   </Avatar>
-                  {isAstrologer && (
+                  {profile.user_type === 'astrologer' && (
                     <div className="space-y-1">
                       <div className="text-sm text-muted-foreground">Verification Status</div>
                       <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        (profile as AstrologerProfile).is_verified
+                        profile.is_verified
                           ? 'bg-green-500/10 text-green-500'
                           : 'bg-yellow-500/10 text-yellow-500'
                       }`}>
-                        {(profile as AstrologerProfile).is_verified ? 'Verified' : 'Pending Verification'}
+                        {profile.is_verified ? 'Verified' : 'Pending Verification'}
                       </div>
                     </div>
                   )}
@@ -222,13 +232,13 @@ const ProfilePage = () => {
                     />
                   </div>
 
-                  {isAstrologer ? (
+                  {profile.user_type === 'astrologer' ? (
                     <>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Experience (years)</label>
                         <Input
                           type="number"
-                          value={isEditing ? editForm.experience : (profile as AstrologerProfile).experience}
+                          value={isEditing ? editForm.experience : profile.experience}
                           onChange={(e) => setEditForm({ ...editForm, experience: parseInt(e.target.value) })}
                           disabled={!isEditing}
                         />
@@ -238,7 +248,7 @@ const ProfilePage = () => {
                         <label className="text-sm font-medium">Price per Minute (₹)</label>
                         <Input
                           type="number"
-                          value={isEditing ? editForm.price_per_min : (profile as AstrologerProfile).price_per_min}
+                          value={isEditing ? editForm.price_per_min : profile.price_per_min}
                           onChange={(e) => setEditForm({ ...editForm, price_per_min: parseInt(e.target.value) })}
                           disabled={!isEditing}
                         />
@@ -247,7 +257,7 @@ const ProfilePage = () => {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Specialties (comma-separated)</label>
                         <Input
-                          value={isEditing ? editForm.specialties.join(', ') : (profile as AstrologerProfile).specialties.join(', ')}
+                          value={isEditing ? editForm.specialties.join(', ') : profile.specialties?.join(', ')}
                           onChange={(e) => setEditForm({ ...editForm, specialties: e.target.value.split(',').map((s: string) => s.trim()) })}
                           disabled={!isEditing}
                         />
@@ -256,7 +266,7 @@ const ProfilePage = () => {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Languages (comma-separated)</label>
                         <Input
-                          value={isEditing ? editForm.languages.join(', ') : (profile as AstrologerProfile).languages.join(', ')}
+                          value={isEditing ? editForm.languages.join(', ') : profile.languages?.join(', ')}
                           onChange={(e) => setEditForm({ ...editForm, languages: e.target.value.split(',').map((s: string) => s.trim()) })}
                           disabled={!isEditing}
                         />
@@ -265,7 +275,7 @@ const ProfilePage = () => {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Bio</label>
                         <Textarea
-                          value={isEditing ? editForm.bio : (profile as AstrologerProfile).bio}
+                          value={isEditing ? editForm.bio : profile.bio}
                           onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
                           disabled={!isEditing}
                           rows={4}
@@ -275,18 +285,18 @@ const ProfilePage = () => {
                       <div className="grid grid-cols-2 gap-4 pt-4">
                         <div className="space-y-1">
                           <div className="text-sm text-muted-foreground">Rating</div>
-                          <div className="font-medium">{(profile as AstrologerProfile).rating.toFixed(1)} / 5.0</div>
+                          <div className="font-medium">{profile.rating?.toFixed(1) || 'N/A'} / 5.0</div>
                         </div>
                         <div className="space-y-1">
                           <div className="text-sm text-muted-foreground">Total Consultations</div>
-                          <div className="font-medium">{(profile as AstrologerProfile).total_consultations}</div>
+                          <div className="font-medium">{profile.total_consultations || 'N/A'}</div>
                         </div>
                       </div>
                     </>
                   ) : (
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Wallet Balance</label>
-                      <div className="text-2xl font-bold text-astro-gold">₹{(profile as UserProfile).wallet_balance}</div>
+                      <div className="text-2xl font-bold text-astro-gold">₹{profile.wallet_balance}</div>
                     </div>
                   )}
                 </div>

@@ -31,18 +31,28 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
 
   const handleChatClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    console.log('Chat button clicked for astrologer:', astrologer.name);
+    
     if (requireAuth('start a chat consultation')) {
+      console.log('User authenticated, navigating to chat');
       navigate(`/chat/${astrologer.id}`);
     } else {
+      console.log('User not authenticated, navigating to login');
       navigate('/login');
     }
   };
 
   const handleCallClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    console.log('Call button clicked for astrologer:', astrologer.name);
+    
     if (requireAuth('start a voice call')) {
+      console.log('User authenticated, navigating to call');
       navigate(`/call/${astrologer.id}`);
     } else {
+      console.log('User not authenticated, navigating to login');
       navigate('/login');
     }
   };
@@ -105,7 +115,10 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
           <Button 
             variant="outline"
             size="sm"
-            onClick={handleChatClick}
+            onClick={(e) => {
+              console.log('Button clicked!');
+              handleChatClick(e);
+            }}
             className="border-orange-200 hover:bg-orange-50 hover:border-orange-300 transition-colors"
           >
             <MessageCircle size={16} className="mr-1 text-orange-600" />
@@ -114,7 +127,10 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
           
           <Button 
             size="sm"
-            onClick={handleCallClick}
+            onClick={(e) => {
+              console.log('Call button clicked!');
+              handleCallClick(e);
+            }}
             className="bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white transition-all duration-300"
           >
             <PhoneCall size={16} className="mr-1" />
