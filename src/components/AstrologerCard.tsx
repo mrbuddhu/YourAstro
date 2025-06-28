@@ -21,8 +21,8 @@ export interface AstrologerProps {
 
 const getDefaultImage = (gender: 'male' | 'female') => {
   return gender === 'male' 
-    ? 'https://img.freepik.com/free-photo/indian-man-traditional-turban-professional-portrait_23-2149416213.jpg'
-    : 'https://img.freepik.com/free-photo/young-indian-woman-wearing-traditional-clothes_23-2149416229.jpg';
+    ? '/placeholder.svg'
+    : '/placeholder.svg';
 };
 
 const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {

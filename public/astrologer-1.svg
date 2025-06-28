@@ -1,0 +1,33 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="100" fill="#FEF3C7"/>
+  
+  <!-- Turban/Head covering -->
+  <path d="M60 80C60 60 80 40 100 40C120 40 140 60 140 80C140 100 120 120 100 120C80 120 60 100 60 80Z" fill="#8B4513"/>
+  <path d="M70 70C70 55 85 40 100 40C115 40 130 55 130 70C130 85 115 100 100 100C85 100 70 85 70 70Z" fill="#D2691E"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="110" rx="25" ry="30" fill="#FFE4B5"/>
+  
+  <!-- Eyes -->
+  <ellipse cx="90" cy="105" rx="4" ry="6" fill="#2F4F4F"/>
+  <ellipse cx="110" cy="105" rx="4" ry="6" fill="#2F4F4F"/>
+  
+  <!-- Nose -->
+  <path d="M100 115L95 125L105 125Z" fill="#FFE4B5"/>
+  
+  <!-- Mustache -->
+  <path d="M85 125C85 125 90 130 100 130C110 130 115 125 115 125" stroke="#2F4F4F" stroke-width="2" fill="none"/>
+  
+  <!-- Beard -->
+  <path d="M80 130C80 130 85 140 100 140C115 140 120 130 120 130" stroke="#2F4F4F" stroke-width="3" fill="none"/>
+  
+  <!-- Necklace -->
+  <ellipse cx="100" cy="150" rx="15" ry="8" fill="none" stroke="#FFD700" stroke-width="2"/>
+  <circle cx="100" cy="150" r="3" fill="#FFD700"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="30" cy="30" r="3" fill="#FF6B6B" opacity="0.6"/>
+  <circle cx="170" cy="50" r="2" fill="#4ECDC4" opacity="0.6"/>
+  <circle cx="40" cy="160" r="2" fill="#45B7D1" opacity="0.6"/>
+</svg> 

@@ -1,11 +1,11 @@
-
 import { AstrologerProps } from "@/components/AstrologerCard";
 
 export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast1",
     name: "Acharya Vinod",
-    image: "/placeholder.svg",
+    image: "/astrologer-1.svg",
+    gender: 'male',
     rating: 4.9,
     reviewCount: 1250,
     experience: 15,
@@ -17,7 +17,8 @@ export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast2",
     name: "Divya Sharma",
-    image: "/placeholder.svg",
+    image: "/astrologer-2.svg",
+    gender: 'female',
     rating: 4.7,
     reviewCount: 850,
     experience: 8,
@@ -29,7 +30,8 @@ export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast3",
     name: "Raj Shastri",
-    image: "/placeholder.svg",
+    image: "/astrologer-3.svg",
+    gender: 'male',
     rating: 4.8,
     reviewCount: 920,
     experience: 12,
@@ -41,7 +43,8 @@ export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast4",
     name: "Maya Jyotish",
-    image: "/placeholder.svg",
+    image: "/astrologer-4.svg",
+    gender: 'female',
     rating: 4.6,
     reviewCount: 640,
     experience: 7,
@@ -53,7 +56,8 @@ export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast5",
     name: "Dr. Amit Trivedi",
-    image: "/placeholder.svg",
+    image: "/astrologer-5.svg",
+    gender: 'male',
     rating: 4.9,
     reviewCount: 1120,
     experience: 20,
@@ -65,7 +69,8 @@ export const mockAstrologers: AstrologerProps[] = [
   {
     id: "ast6",
     name: "Priya Kapoor",
-    image: "/placeholder.svg",
+    image: "/astrologer-6.svg",
+    gender: 'female',
     rating: 4.7,
     reviewCount: 780,
     experience: 9,
