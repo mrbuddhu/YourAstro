@@ -81,59 +81,16 @@ const SignupPage = () => {
       if (authError) throw authError;
 
       if (authData.user) {
-        // Create profile in the appropriate table based on role
-        if (role === "astrologer") {
-          const { error: profileError } = await supabase
-            .from('astrologer_profiles')
-            .insert({
-              id: authData.user.id,
-              full_name: name,
-              email: email,
-              phone: phone,
-              experience: parseInt(experience),
-              specialties: specialties,
-              languages: languages,
-              bio: bio,
-              price_per_min: parseInt(pricePerMin),
-              is_verified: false,
-              is_online: false,
-              rating: 0,
-              total_consultations: 0
-            });
-
-          if (profileError) throw profileError;
-        } else {
-          const { error: profileError } = await supabase
-            .from('user_profiles')
-            .insert({
-              id: authData.user.id,
-              full_name: name,
-              email: email,
-              phone: phone,
-              wallet_balance: 0
-            });
-
-          if (profileError) throw profileError;
-        }
-
         toast({
           title: "Signup Successful",
-          description: role === "astrologer" 
-            ? "Please wait for admin verification to start consulting."
-            : "Welcome to 123Astro! Please verify your email.",
+          description: "Account created! Please check your email for a confirmation link before logging in.",
           variant: "default",
         });
-
-        // Sign in the user automatically
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) throw signInError;
-
-        // Redirect based on role
-        navigate(role === "astrologer" ? '/profile' : '/astrologers');
+        // Redirect to login page after short delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+        return;
       }
     } catch (error: any) {
       console.error('Signup error:', error);

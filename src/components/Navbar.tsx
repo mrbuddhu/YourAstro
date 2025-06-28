@@ -204,7 +204,6 @@ const Navbar = () => {
                 <span className="text-white font-bold">YA</span>
               </div>
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">YourAstro</span>
           </Link>
           {!isMobile && <NavLinks />}
         </div>
