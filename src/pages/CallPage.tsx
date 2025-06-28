@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Clock, MessageCircle, Info, PhoneOff, Phone as PhoneIcon, Mic, MicOff } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
-import { mockAstrologers } from "@/data/mockAstrologers";
+import { ArrowLeft, Clock, MessageCircle, Info, PhoneOff, Phone as PhoneIcon, Mic, MicOff, Loader2 } from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -24,7 +22,7 @@ interface CallSession {
 
 const CallPage = () => {
   const { astrologerId } = useParams();
-  const astrologer = mockAstrologers.find(a => a.id === astrologerId);
+  const [astrologer, setAstrologer] = useState<any>(null);
   const [callStatus, setCallStatus] = useState<'waiting' | 'active' | 'ended' | 'missed'>('waiting');
   const [timer, setTimer] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -32,6 +30,40 @@ const CallPage = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [callSessionId, setCallSessionId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Fetch astrologer data
+  useEffect(() => {
+    const fetchAstrologer = async () => {
+      if (!astrologerId) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', astrologerId)
+        .eq('user_type', 'astrologer')
+        .single();
+        
+      if (error) {
+        setError('Failed to load astrologer profile.');
+        toast({
+          title: "Error",
+          description: "Could not load astrologer profile. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setAstrologer(data);
+      }
+      
+      setLoading(false);
+    };
+    
+    fetchAstrologer();
+  }, [astrologerId]);
   
   // Get current user
   useEffect(() => {
@@ -87,6 +119,11 @@ const CallPage = () => {
       
     if (error) {
       console.error('Error updating call session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update call session.",
+        variant: "destructive",
+      });
     }
   };
   
@@ -99,6 +136,13 @@ const CallPage = () => {
         startCall();
       }
     },
+    onError: (error) => {
+      toast({
+        title: "Error Starting Call",
+        description: "Failed to start call session. Please try again.",
+        variant: "destructive",
+      });
+    }
   });
   
   // Timer effect
@@ -113,7 +157,7 @@ const CallPage = () => {
           // Deduct from wallet every minute
           if (newTime % 60 === 0) {
             setWalletBalance(prev => {
-              const newBalance = prev - (astrologer?.pricePerMin || 0);
+              const newBalance = prev - (astrologer?.price_per_min || 0);
               
               // Check if balance is low
               if (newBalance < 100) {
@@ -160,7 +204,7 @@ const CallPage = () => {
     
     toast({
       title: "Call Started",
-      description: `You are now connected with ${astrologer?.name}`,
+      description: `You are now connected with ${astrologer?.full_name}`,
     });
   };
   
@@ -180,7 +224,7 @@ const CallPage = () => {
     
     toast({
       title: "Call Ended",
-      description: `Your call with ${astrologer?.name} has ended.`,
+      description: `Your call with ${astrologer?.full_name} has ended.`,
     });
   };
   
@@ -214,7 +258,7 @@ const CallPage = () => {
           endCall();
           toast({
             title: "Call Disconnected",
-            description: `${astrologer?.name} has disconnected from the call.`,
+            description: `${astrologer?.full_name} has disconnected from the call.`,
             variant: "destructive",
           });
         }
@@ -232,9 +276,21 @@ const CallPage = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [callSessionId, astrologerId, callStatus, userId]);
+  }, [callSessionId, astrologerId, callStatus, userId, astrologer]);
 
-  if (!astrologer) {
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-4">Loading Astrologer...</h1>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !astrologer) {
     return (
       <>
         <Navbar />
@@ -293,13 +349,13 @@ const CallPage = () => {
             {/* Call display */}
             <div className="p-10 flex flex-col items-center justify-center">
               <Avatar className="h-32 w-32 border-4 border-astro-purple/40 mb-4">
-                <AvatarImage src={astrologer.image} alt={astrologer.name} />
+                <AvatarImage src={astrologer.avatar_url || "/placeholder.svg"} alt={astrologer.full_name} />
                 <AvatarFallback className="bg-astro-purple/20 text-3xl">
-                  {astrologer.name.split(' ').map(n => n[0]).join('')}
+                  {astrologer.full_name?.split(' ').map((n: string) => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               
-              <h2 className="text-2xl font-bold mb-2">{astrologer.name}</h2>
+              <h2 className="text-2xl font-bold mb-2">{astrologer.full_name}</h2>
               
               <Badge className={`mb-6 ${callStatus === 'waiting' ? 'bg-amber-500' : callStatus === 'active' ? 'bg-green-500' : 'bg-red-500'}`}>
                 {callStatus === 'waiting' ? 'Connecting...' : callStatus === 'active' ? 'In Call' : 'Call Ended'}
@@ -310,7 +366,7 @@ const CallPage = () => {
                   <p className="text-foreground/70">
                     {callStatus === 'waiting' 
                       ? 'Please wait while we connect you...' 
-                      : `You're speaking with ${astrologer.name}`
+                      : `You're speaking with ${astrologer.full_name}`
                     }
                   </p>
                 </div>
@@ -320,7 +376,7 @@ const CallPage = () => {
                 <div className="text-center mb-4">
                   <p className="font-medium">Call Duration: {formatTime(timer)}</p>
                   <p className="text-foreground/70 mt-1">
-                    Amount charged: ₹{Math.ceil(timer / 60) * astrologer.pricePerMin}
+                    Amount charged: ₹{Math.ceil(timer / 60) * (astrologer.price_per_min || 0)}
                   </p>
                 </div>
               )}
@@ -331,9 +387,14 @@ const CallPage = () => {
                 <Button 
                   onClick={() => startCallMutation.mutate()}
                   className="bg-green-500 hover:bg-green-600 px-6"
+                  disabled={startCallMutation.isPending}
                 >
-                  <PhoneIcon size={20} className="mr-2" />
-                  Start Call
+                  {startCallMutation.isPending ? (
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  ) : (
+                    <PhoneIcon size={20} className="mr-2" />
+                  )}
+                  {startCallMutation.isPending ? "Connecting..." : "Start Call"}
                 </Button>
               ) : callStatus === 'active' ? (
                 <>
@@ -384,7 +445,7 @@ const CallPage = () => {
           {/* Rate card */}
           {callStatus !== 'ended' && (
             <div className="text-center text-sm text-foreground/70">
-              <p>You will be charged ₹{astrologer.pricePerMin} per minute of consultation.</p>
+              <p>You will be charged ₹{astrologer.price_per_min || 0} per minute of consultation.</p>
             </div>
           )}
         </div>

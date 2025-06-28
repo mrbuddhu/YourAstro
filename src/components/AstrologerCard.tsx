@@ -62,19 +62,21 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
       <div className="flex items-start gap-4">
         {/* Avatar with online indicator */}
         <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-purple-100 p-0.5">
-            <div className="w-full h-full rounded-full overflow-hidden">
-              <img 
-                src={astrologer.image || getDefaultImage(astrologer.gender)} 
-                alt={`${astrologer.name} - Indian Astrologer`}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = getDefaultImage(astrologer.gender);
-                }}
-              />
+          <Link to={`/astrologer/${astrologer.id}`}> 
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-100 to-purple-100 p-0.5">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <img 
+                  src={astrologer.image || getDefaultImage(astrologer.gender)} 
+                  alt={`${astrologer.name} - Indian Astrologer`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = getDefaultImage(astrologer.gender);
+                  }}
+                />
+              </div>
             </div>
-          </div>
+          </Link>
           {astrologer.isOnline && (
             <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
           )}
@@ -84,9 +86,11 @@ const AstrologerCard = ({ astrologer }: { astrologer: AstrologerProps }) => {
         <div className="flex-1">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-lg font-semibold bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
-                {astrologer.name}
-              </h3>
+              <Link to={`/astrologer/${astrologer.id}`}> 
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
+                  {astrologer.name}
+                </h3>
+              </Link>
               <p className="text-sm text-gray-600">{astrologer.experience} years experience</p>
               <p className="text-sm text-gray-600">{astrologer.languages.join(', ')}</p>
             </div>

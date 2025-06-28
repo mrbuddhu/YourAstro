@@ -45,7 +45,7 @@ const LoginPage = () => {
 
         toast({
           title: "Login Successful",
-          description: "Welcome back to 123Astro!",
+          description: "Welcome back to YourAstro!",
           variant: "default",
         });
 
@@ -76,7 +76,7 @@ const LoginPage = () => {
           <Card className="cosmic-card">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Welcome Back</CardTitle>
-              <CardDescription>Sign in to your 123Astro account</CardDescription>
+              <CardDescription>Sign in to your YourAstro account</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleEmailLogin}>

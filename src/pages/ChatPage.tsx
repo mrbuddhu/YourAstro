@@ -6,9 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Send, ArrowLeft, Clock, Phone, Info, AlertCircle } from 'lucide-react';
+import { Send, ArrowLeft, Clock, Phone, Info, AlertCircle, Loader2 } from 'lucide-react';
 import Navbar from "@/components/Navbar";
-import { mockAstrologers } from "@/data/mockAstrologers";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -32,7 +31,7 @@ interface ChatSession {
 
 const ChatPage = () => {
   const { astrologerId } = useParams();
-  const astrologer = mockAstrologers.find(a => a.id === astrologerId);
+  const [astrologer, setAstrologer] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [timer, setTimer] = useState(0);
@@ -40,7 +39,41 @@ const ChatPage = () => {
   const [walletBalance, setWalletBalance] = useState(500);
   const [chatSessionId, setChatSessionId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch astrologer data
+  useEffect(() => {
+    const fetchAstrologer = async () => {
+      if (!astrologerId) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', astrologerId)
+        .eq('user_type', 'astrologer')
+        .single();
+        
+      if (error) {
+        setError('Failed to load astrologer profile.');
+        toast({
+          title: "Error",
+          description: "Could not load astrologer profile. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setAstrologer(data);
+      }
+      
+      setLoading(false);
+    };
+    
+    fetchAstrologer();
+  }, [astrologerId]);
   
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -61,7 +94,7 @@ const ChatPage = () => {
           // Deduct from wallet every minute
           if (newTime % 60 === 0) {
             setWalletBalance(prev => {
-              const newBalance = prev - (astrologer?.pricePerMin || 0);
+              const newBalance = prev - (astrologer?.price_per_min || 0);
               
               // Check if balance is low
               if (newBalance < 100) {
@@ -118,6 +151,11 @@ const ChatPage = () => {
 
       if (error) {
         console.error('Error loading messages:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load chat history.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -163,17 +201,6 @@ const ChatPage = () => {
 
       if (error) {
         console.error('Error creating chat session:', error);
-        // If table doesn't exist, create a mock session
-        if (error.code === '42P01') { // Table doesn't exist
-          console.log('Chat sessions table not found, using mock session');
-          return {
-            id: `mock_${Date.now()}`,
-            astrologer_id: astrologer.id,
-            user_id: userId,
-            status: 'active',
-            start_time: new Date().toISOString()
-          };
-        }
         toast({
           title: "Error Starting Chat",
           description: "We couldn't start the chat session. Please try again.",
@@ -185,14 +212,12 @@ const ChatPage = () => {
       return data;
     } catch (error) {
       console.error('Error creating chat session:', error);
-      // Create mock session for development
-      return {
-        id: `mock_${Date.now()}`,
-        astrologer_id: astrologer.id,
-        user_id: userId,
-        status: 'active',
-        start_time: new Date().toISOString()
-      };
+      toast({
+        title: "Error Starting Chat",
+        description: "We couldn't start the chat session. Please try again.",
+        variant: "destructive",
+      });
+      return null;
     }
   };
 
@@ -211,18 +236,6 @@ const ChatPage = () => {
 
       if (error) {
         console.error('Error sending message:', error);
-        // If table doesn't exist, add to local messages
-        if (error.code === '42P01') {
-          const newMessage: Message = {
-            id: `msg_${Date.now()}`,
-            chat_session_id: chatSessionId,
-            sender_id: userId,
-            content: content,
-            created_at: new Date().toISOString()
-          };
-          setMessages(prev => [...prev, newMessage]);
-          return;
-        }
         toast({
           title: "Error",
           description: "Failed to send message. Please try again.",
@@ -231,15 +244,11 @@ const ChatPage = () => {
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      // Add to local messages for development
-      const newMessage: Message = {
-        id: `msg_${Date.now()}`,
-        chat_session_id: chatSessionId,
-        sender_id: userId,
-        content: content,
-        created_at: new Date().toISOString()
-      };
-      setMessages(prev => [...prev, newMessage]);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -261,27 +270,13 @@ const ChatPage = () => {
       setChatSessionId(session.id);
       setIsRunning(true);
 
-      // Subscribe to real-time messages
-      const subscription = supabase
-        .channel(`chat_${session.id}`)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_session_id=eq.${session.id}`
-        }, (payload) => {
-          const newMessage = payload.new;
-          setMessages((prev) => [...prev, newMessage]);
-        })
-        .subscribe();
-
       // Send welcome message
       const { error } = await supabase
         .from('messages')
         .insert({
           chat_session_id: session.id,
           sender_id: astrologer?.id || 'unknown',
-          content: `Hello, I'm ${astrologer?.name}. How can I assist you with your cosmic journey today?`
+          content: `Hello, I'm ${astrologer?.full_name}. How can I assist you with your cosmic journey today?`
         });
 
       if (error) {
@@ -380,7 +375,19 @@ const ChatPage = () => {
     }, 1500);
   };
   
-  if (!astrologer) {
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-4">Loading Astrologer...</h1>
+        </div>
+      </>
+    );
+  }
+  
+  if (error || !astrologer) {
     return (
       <>
         <Navbar />
@@ -409,20 +416,20 @@ const ChatPage = () => {
                 </Link>
               </Button>
               <Avatar className="h-10 w-10 border-2 border-astro-purple/30">
-                <AvatarImage src={astrologer.image} alt={astrologer.name} />
+                <AvatarImage src={astrologer.avatar_url || "/placeholder.svg"} alt={astrologer.full_name} />
                 <AvatarFallback className="bg-astro-purple/20">
-                  {astrologer.name.split(' ').map(n => n[0]).join('')}
+                  {astrologer.full_name?.split(' ').map((n: string) => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="font-medium">{astrologer.name}</h2>
-                  {astrologer.isOnline && (
+                  <h2 className="font-medium">{astrologer.full_name}</h2>
+                  {astrologer.is_online && (
                     <Badge className="bg-green-500 hover:bg-green-600 text-xs">Online</Badge>
                   )}
                 </div>
                 <p className="text-sm text-foreground/70">
-                  {astrologer.experience} years • {astrologer.languages.join(", ")}
+                  {astrologer.experience || 0} years • {(astrologer.languages || []).join(", ")}
                 </p>
               </div>
             </div>
@@ -462,7 +469,7 @@ const ChatPage = () => {
               
               <div className="flex items-center gap-2 text-sm">
                 <span className="font-medium">
-                  Rate: <span className="text-astro-gold">₹{astrologer.pricePerMin}</span>/min
+                  Rate: <span className="text-astro-gold">₹{astrologer.price_per_min || 0}</span>/min
                 </span>
                 <span>•</span>
                 <span>
@@ -483,8 +490,8 @@ const ChatPage = () => {
                   </div>
                   <h3 className="text-xl font-medium mb-2">Start Your Consultation</h3>
                   <p className="text-foreground/70 max-w-md">
-                    Click the 'Start Chat' button below to begin your session with {astrologer.name}.
-                    Your wallet will be charged ₹{astrologer.pricePerMin} per minute.
+                    Click the 'Start Chat' button below to begin your session with {astrologer.full_name}.
+                    Your wallet will be charged ₹{astrologer.price_per_min || 0} per minute.
                   </p>
                 </div>
               ) : (
@@ -492,8 +499,8 @@ const ChatPage = () => {
                   {/* System message at the start of chat */}
                   {messages.length > 0 && (
                     <div className="bg-muted/20 rounded-lg p-3 text-center text-sm text-foreground/70 mb-6">
-                      <p>Chat started with {astrologer.name}</p>
-                      <p>Session rate: ₹{astrologer.pricePerMin}/minute</p>
+                      <p>Chat started with {astrologer.full_name}</p>
+                      <p>Session rate: ₹{astrologer.price_per_min || 0}/minute</p>
                     </div>
                   )}
                   
@@ -543,9 +550,9 @@ const ChatPage = () => {
                 <Button
                   onClick={toggleChatSession}
                   className="w-full star-button"
-                  disabled={!astrologer.isOnline}
+                  disabled={!astrologer.is_online}
                 >
-                  {astrologer.isOnline ? "Start Chat" : "Astrologer Offline"}
+                  {astrologer.is_online ? "Start Chat" : "Astrologer Offline"}
                 </Button>
               ) : (
                 <form onSubmit={handleMessageSubmit} className="flex items-center gap-2 w-full">
@@ -581,7 +588,7 @@ const ChatPage = () => {
                 End Session
               </Button>
               <p className="mt-2 text-xs text-foreground/70">
-                Your wallet will be charged ₹{astrologer.pricePerMin} per minute of consultation.
+                Your wallet will be charged ₹{astrologer.price_per_min || 0} per minute of consultation.
               </p>
             </div>
           )}

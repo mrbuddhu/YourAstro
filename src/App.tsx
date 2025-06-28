@@ -16,6 +16,7 @@ import HoroscopePage from "./pages/HoroscopePage";
 import WalletPage from "./pages/WalletPage";
 import AboutPage from "./pages/AboutPage";
 import ProfilePage from "./pages/ProfilePage";
+import AstrologerProfilePage from "./pages/AstrologerProfilePage";
 import * as React from 'react';
 import { useAuth } from './hooks/useAuth';
 
@@ -104,6 +105,7 @@ const App = () => {
               <Route path="/wallet/add-funds" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/astrologer/:astrologerId" element={<AstrologerProfilePage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

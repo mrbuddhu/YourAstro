@@ -138,7 +138,7 @@ const SignupPage = () => {
           <Card className="cosmic-card">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Create Your Account</CardTitle>
-              <CardDescription>Join 123Astro for personalized cosmic guidance</CardDescription>
+              <CardDescription>Join YourAstro for personalized cosmic guidance</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleEmailSignup}>

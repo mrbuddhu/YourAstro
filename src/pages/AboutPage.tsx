@@ -24,7 +24,7 @@ const AboutPage = () => {
             
             <p className="text-lg text-foreground/70 mb-8">
               We're working on creating an amazing story about our journey in astrology. 
-              Check back soon to learn more about 123Astro and our mission to connect you 
+              Check back soon to learn more about YourAstro and our mission to connect you 
               with the cosmic guidance you seek.
             </p>
             
