@@ -1,0 +1,40 @@
+<!-- This is a placeholder for the OG image. In a real implementation, you would create a 1200x630 PNG image with your branding. -->
+<!-- For now, we'll use a simple SVG that can be converted to PNG -->
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="50" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="1100" cy="530" r="80" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="200" cy="500" r="30" fill="rgba(255,255,255,0.1)"/>
+  
+  <!-- Large hand palm icon -->
+  <g transform="translate(100,150)">
+    <!-- Hand palm -->
+    <path d="M200 100C200 100 150 50 100 100C50 150 100 200 150 250C200 300 250 250 300 200C350 150 300 100 250 50C200 0 200 100 200 100Z" fill="#FFB6C1"/>
+    <path d="M200 300C200 300 150 250 100 300C50 350 100 400 150 450C200 500 250 450 300 400C350 350 300 300 250 250C200 200 200 300 200 300Z" fill="#FFB6C1"/>
+    <path d="M200 500C200 500 150 450 100 500C50 550 100 600 150 650C200 700 250 650 300 600C350 550 300 500 250 450C200 400 200 500 200 500Z" fill="#FFB6C1"/>
+    
+    <!-- Palm lines -->
+    <path d="M150 150L250 150" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+    <path d="M125 225L275 225" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+    <path d="M100 300L300 300" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Life line curve -->
+    <path d="M50 100Q25 200 50 300Q75 400 100 500" stroke="#8B4513" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="600" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">YourAstro</text>
+  <text x="600" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="rgba(255,255,255,0.9)">Connect with Expert Astrologers</text>
+  <text x="600" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.7)">Personalized guidance through chat and voice consultations</text>
+</svg> 

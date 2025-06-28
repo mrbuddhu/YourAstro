@@ -200,19 +200,18 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 relative">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Palm tree trunk */}
-                <path d="M16 28L14 20H18L16 28Z" fill="#8B4513"/>
-                <path d="M16 20L14 12H18L16 20Z" fill="#A0522D"/>
-                <path d="M16 12L14 4H18L16 12Z" fill="#8B4513"/>
+                {/* Hand palm */}
+                <path d="M16 8C16 8 14 6 12 8C10 10 12 12 14 14C16 16 18 14 20 12C22 10 20 8 18 6C16 4 16 8 16 8Z" fill="#FFB6C1"/>
+                <path d="M16 16C16 16 14 14 12 16C10 18 12 20 14 22C16 24 18 22 20 20C22 18 20 16 18 14C16 12 16 16 16 16Z" fill="#FFB6C1"/>
+                <path d="M16 24C16 24 14 22 12 24C10 26 12 28 14 30C16 32 18 30 20 28C22 26 20 24 18 22C16 20 16 24 16 24Z" fill="#FFB6C1"/>
                 
-                {/* Palm leaves */}
-                <path d="M16 4C16 4 12 2 8 6C4 10 6 14 8 16C10 18 12 16 16 4Z" fill="#228B22"/>
-                <path d="M16 4C16 4 20 2 24 6C28 10 26 14 24 16C22 18 20 16 16 4Z" fill="#228B22"/>
-                <path d="M16 4C16 4 14 0 10 4C6 8 8 12 10 14C12 16 14 14 16 4Z" fill="#32CD32"/>
-                <path d="M16 4C16 4 18 0 22 4C26 8 24 12 22 14C20 16 18 14 16 4Z" fill="#32CD32"/>
+                {/* Palm lines */}
+                <path d="M14 10L18 10" stroke="#8B4513" stroke-width="1" stroke-linecap="round"/>
+                <path d="M13 14L19 14" stroke="#8B4513" stroke-width="1" stroke-linecap="round"/>
+                <path d="M12 18L20 18" stroke="#8B4513" stroke-width="1" stroke-linecap="round"/>
                 
-                {/* Coconut */}
-                <circle cx="16" cy="6" r="2" fill="#8B4513"/>
+                {/* Life line curve */}
+                <path d="M10 8Q8 12 10 16Q12 20 14 24" stroke="#8B4513" stroke-width="1.5" fill="none" stroke-linecap="round"/>
               </svg>
             </div>
           </Link>
