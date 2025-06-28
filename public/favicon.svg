@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Palm tree trunk -->
+  <path d="M16 28L14 20H18L16 28Z" fill="#8B4513"/>
+  <path d="M16 20L14 12H18L16 20Z" fill="#A0522D"/>
+  <path d="M16 12L14 4H18L16 12Z" fill="#8B4513"/>
+  
+  <!-- Palm leaves -->
+  <path d="M16 4C16 4 12 2 8 6C4 10 6 14 8 16C10 18 12 16 16 4Z" fill="#228B22"/>
+  <path d="M16 4C16 4 20 2 24 6C28 10 26 14 24 16C22 18 20 16 16 4Z" fill="#228B22"/>
+  <path d="M16 4C16 4 14 0 10 4C6 8 8 12 10 14C12 16 14 14 16 4Z" fill="#32CD32"/>
+  <path d="M16 4C16 4 18 0 22 4C26 8 24 12 22 14C20 16 18 14 16 4Z" fill="#32CD32"/>
+  
+  <!-- Coconut -->
+  <circle cx="16" cy="6" r="2" fill="#8B4513"/>
+</svg> 
