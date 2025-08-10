@@ -839,16 +839,7 @@ const Index = () => {
       <section className="relative py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <div className="fade-on-scroll">
-            {/* Decorative Elements */}
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center gap-6 text-4xl">
-                <span className="animate-subtle-float text-purple-400">◆</span>
-                <span className="animate-subtle-float text-purple-300" style={{animationDelay: '0.5s'}}>●</span>
-                <span className="animate-subtle-float text-purple-400" style={{animationDelay: '1s'}}>🔮</span>
-                <span className="animate-subtle-float text-purple-300" style={{animationDelay: '1.5s'}}>●</span>
-                <span className="animate-subtle-float text-purple-400" style={{animationDelay: '2s'}}>◆</span>
-              </div>
-            </div>
+
 
             <h1 className="text-5xl md:text-7xl font-['Manrope'] font-bold mb-8 leading-tight">
               <span className="text-cosmic-bright">{t.hero.title}</span>
@@ -933,7 +924,7 @@ const Index = () => {
                   <div className="flex items-center justify-center gap-1 mb-4">
                     <span className="text-purple-400 text-lg">⭐</span>
                     <span className="text-white text-sm font-bold">{astrologer.rating}</span>
-                  </div>
+                </div>
 
                   <div className="flex items-center justify-center gap-2 mb-6">
                     <div className={`w-3 h-3 rounded-full ${astrologer.isOnline ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
@@ -951,13 +942,13 @@ const Index = () => {
                       (language === 'hi' ? '📅 समय बुक करें' : '📅 Schedule')
                     }
                   </button>
-                </div>
+                  </div>
               </div>
             ))}
+            </div>
           </div>
-        </div>
-      </section>
-
+        </section>
+        
       {/* Services Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
@@ -968,9 +959,9 @@ const Index = () => {
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               {t.services.subtitle}
-            </p>
-          </div>
-
+              </p>
+            </div>
+            
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <div
@@ -1115,8 +1106,8 @@ const Index = () => {
                         </div>
                         <span className="text-cosmic-gradient font-bold">{option.price}</span>
                       </button>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
                 </div>
               )}
 
@@ -1312,11 +1303,11 @@ const Index = () => {
                               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce"></div>
                               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
                               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                            </div>
+            </div>
                             <span className="text-xs text-purple-300">
                               {language === 'hi' ? 'ज्योतिषी जी टाइप कर रहे हैं...' : 'Astrologer is typing...'}
                             </span>
-                          </div>
+          </div>
                         </div>
                       </div>
                     )}
@@ -1397,7 +1388,7 @@ const Index = () => {
                               <p className="font-medium">
                                 {language === 'hi' ? 'जोड़ रहे हैं...' : 'Connecting...'}
                               </p>
-                            </div>
+          </div>
                           </div>
                         )}
                       </div>
