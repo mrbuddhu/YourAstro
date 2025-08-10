@@ -17,8 +17,13 @@ const root = createRoot(container);
 
 console.log('About to render App component');
 
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+try {
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+  console.log('App component rendered successfully');
+} catch (error) {
+  console.error('Error rendering App component:', error);
+}

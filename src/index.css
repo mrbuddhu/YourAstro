@@ -1,6 +1,345 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes subtle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fade-in-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(24px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes gradient-x {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(255, 138, 0, 0.3); 
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(255, 138, 0, 0); 
+  }
+}
+
+/* Animation Classes */
+.animate-subtle-float { animation: subtle-float 6s ease-in-out infinite; }
+.animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+.animate-scale-in { animation: scale-in 0.6s ease-out forwards; }
+.animate-gradient-x { animation: gradient-x 8s ease infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s infinite; }
+
+/* Premium Cosmic UI - Unique Design Better Than AstroTalk */
+.cosmic-bg {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 53, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 150, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(0, 255, 150, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 25%, #16213e 50%, #0a0a0a 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.cosmic-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 40px 70px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 0.1), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 150px 100px;
+  animation: cosmic-drift 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes cosmic-drift {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-100px); }
+}
+
+.premium-gradient {
+  background: linear-gradient(135deg, 
+    #667eea 0%, 
+    #764ba2 25%, 
+    #f093fb 50%, 
+    #f5576c 75%, 
+    #4facfe 100%);
+}
+
+.cosmic-orb {
+  background: linear-gradient(135deg, 
+    rgba(102, 126, 234, 0.8) 0%, 
+    rgba(118, 75, 162, 0.8) 50%, 
+    rgba(240, 147, 251, 0.8) 100%);
+  box-shadow: 
+    0 0 30px rgba(102, 126, 234, 0.5),
+    0 0 60px rgba(118, 75, 162, 0.3),
+    inset 0 0 20px rgba(240, 147, 251, 0.2);
+}
+
+.text-cosmic-gradient {
+  background: linear-gradient(135deg, 
+    #667eea 0%, 
+    #764ba2 25%, 
+    #f093fb 50%, 
+    #f5576c 75%, 
+    #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: cosmic-text 3s ease-in-out infinite;
+}
+
+@keyframes cosmic-text {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.text-cosmic-bright {
+  color: #a855f7;
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.cosmic-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(168, 85, 247, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(168, 85, 247, 0.1), 
+    transparent);
+  transition: left 0.8s ease;
+}
+
+.cosmic-card:hover::before {
+  left: 100%;
+}
+
+.cosmic-card:hover {
+  background: rgba(17, 24, 39, 0.9);
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateY(-8px) rotateX(5deg);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+.cosmic-nav {
+  background: rgba(10, 10, 26, 0.95);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cosmic-button {
+  background: linear-gradient(135deg, 
+    #667eea 0%, 
+    #764ba2 50%, 
+    #f093fb 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 15px rgba(102, 126, 234, 0.4),
+    0 0 20px rgba(118, 75, 162, 0.2);
+}
+
+.cosmic-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.cosmic-button:hover::before {
+  left: 100%;
+}
+
+.cosmic-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 15px 35px rgba(102, 126, 234, 0.6),
+    0 0 30px rgba(118, 75, 162, 0.4);
+}
+
+.cosmic-outline {
+  background: transparent;
+  border: 2px solid rgba(168, 85, 247, 0.6);
+  color: #a855f7;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.cosmic-outline:hover {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 10px 25px rgba(168, 85, 247, 0.3),
+    0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.language-cosmic {
+  background: rgba(168, 85, 247, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  transition: all 0.3s ease;
+}
+
+.language-cosmic:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 5px 15px rgba(168, 85, 247, 0.2);
+}
+
+.floating-element {
+  animation: cosmic-float 6s ease-in-out infinite;
+}
+
+@keyframes cosmic-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(1deg); }
+  66% { transform: translateY(-10px) rotate(-1deg); }
+}
+
+.pulse-cosmic {
+  animation: cosmic-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+  }
+}
+
+.service-card {
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 138, 0, 0.5), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.service-card:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 138, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.4);
+}
+
+.advisor-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.advisor-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 138, 0, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.input-field {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-field:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 138, 0, 0.3);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.1);
+}
 
 @layer base {
   :root {
