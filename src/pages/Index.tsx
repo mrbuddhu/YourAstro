@@ -184,11 +184,11 @@ const Index = () => {
     toastElement.innerHTML = `
       <div class="flex items-start gap-3">
         <div class="text-xl">${type === 'error' ? '⚠️' : '✨'}</div>
-        <div>
+              <div>
           <div class="font-semibold">${title}</div>
           <div class="text-sm opacity-80 mt-1">${description}</div>
-        </div>
-      </div>
+              </div>
+            </div>
     `;
     
     document.body.appendChild(toastElement);
@@ -764,54 +764,57 @@ const Index = () => {
       
       {/* Floating Cosmic Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 cosmic-orb rounded-full opacity-20 floating-element"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 cosmic-orb rounded-full opacity-15 floating-element" style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-32 left-32 w-40 h-40 cosmic-orb rounded-full opacity-10 floating-element" style={{animationDelay: '4s'}}></div>
-        <div className="absolute bottom-20 right-10 w-28 h-28 cosmic-orb rounded-full opacity-25 floating-element" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 cosmic-orb rounded-full opacity-5 floating-element" style={{animationDelay: '3s'}}></div>
+        <div className="absolute top-20 left-4 sm:left-10 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 cosmic-orb rounded-full opacity-20 floating-element"></div>
+        <div className="absolute top-40 right-4 sm:right-20 w-12 sm:w-16 md:w-24 h-12 sm:h-16 md:h-24 cosmic-orb rounded-full opacity-15 floating-element" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-32 left-8 sm:left-32 w-20 sm:w-28 md:w-40 h-20 sm:h-28 md:h-40 cosmic-orb rounded-full opacity-10 floating-element" style={{animationDelay: '4s'}}></div>
+        <div className="absolute bottom-20 right-4 sm:right-10 w-14 sm:w-20 md:w-28 h-14 sm:h-20 md:h-28 cosmic-orb rounded-full opacity-25 floating-element" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 cosmic-orb rounded-full opacity-5 floating-element" style={{animationDelay: '3s'}}></div>
       </div>
       
       {/* Navigation */}
       <nav className="cosmic-nav sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 fade-on-scroll">
-              <div className="w-12 h-12 cosmic-orb rounded-xl flex items-center justify-center shadow-lg floating-element">
-                <span className="text-white font-bold text-xl">◈</span>
+            <div className="flex items-center gap-2 sm:gap-4 fade-on-scroll">
+              <div className="w-10 sm:w-12 h-10 sm:h-12 cosmic-orb rounded-xl flex items-center justify-center shadow-lg floating-element">
+                <span className="text-white font-bold text-lg sm:text-xl">◈</span>
               </div>
-              <div>
-                <span className="font-['Manrope'] font-bold text-3xl text-cosmic-gradient">{t.brand}</span>
+              <div className="hidden sm:block">
+                <span className="font-['Manrope'] font-bold text-2xl sm:text-3xl text-cosmic-gradient">{t.brand}</span>
                 <div className="text-xs text-cosmic-bright font-medium">{t.tagline}</div>
+              </div>
+              <div className="sm:hidden">
+                <span className="font-['Manrope'] font-bold text-xl text-cosmic-gradient">{t.brand}</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {/* Language Switcher */}
               <button
                 onClick={toggleLanguage}
-                className="language-cosmic px-4 py-2 rounded-lg text-sm font-medium text-cosmic-bright hover:text-purple-300 transition-all"
+                className="language-cosmic px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-cosmic-bright hover:text-purple-300 transition-all"
               >
-                {language === 'en' ? '🇮🇳 हिंदी' : '🇬🇧 English'}
+                {language === 'en' ? '🇮🇳 हिं' : '🇬🇧 EN'}
               </button>
 
               {user ? (
-                <div className="flex items-center gap-4 fade-on-scroll">
-                  <div className="cosmic-card px-6 py-3 rounded-xl">
-                    <span className="text-purple-200 text-sm">
+                <div className="flex items-center gap-2 sm:gap-4 fade-on-scroll">
+                  <div className="hidden sm:block cosmic-card px-4 sm:px-6 py-2 sm:py-3 rounded-xl">
+                    <span className="text-purple-200 text-xs sm:text-sm">
                       {t.nav.welcome}, {user.fullName}
                     </span>
                   </div>
                   <button
-                    className="cosmic-outline px-6 py-3 rounded-xl text-sm font-medium transition-all"
+                    className="cosmic-outline px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium transition-all"
                     onClick={handleLogout}
                   >
                     {t.nav.logout}
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 fade-on-scroll">
+                <div className="flex items-center gap-2 sm:gap-4 fade-on-scroll">
                   <button
-                    className="text-yellow-200 hover:text-yellow-100 px-6 py-3 text-sm font-medium transition-colors"
+                    className="hidden sm:block text-yellow-200 hover:text-yellow-100 px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-medium transition-colors"
                     onClick={() => {
                       setModalType('login');
                       setShowModal(true);
@@ -820,13 +823,13 @@ const Index = () => {
                     {t.nav.signin}
                   </button>
                   <button
-                    className="cosmic-button px-6 py-3 text-white text-sm font-bold rounded-xl"
+                    className="cosmic-button px-3 sm:px-6 py-2 sm:py-3 text-white text-xs sm:text-sm font-bold rounded-xl"
                     onClick={() => {
                       setModalType('signup');
                       setShowModal(true);
                     }}
                   >
-                    {t.nav.getStarted}
+                    {language === 'en' ? 'Get Started' : 'शुरू करें'}
                   </button>
                 </div>
               )}
@@ -836,31 +839,30 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-6">
+      <section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto text-center">
           <div className="fade-on-scroll">
 
 
-            <h1 className="text-5xl md:text-7xl font-['Manrope'] font-bold mb-8 leading-tight">
-              <span className="text-cosmic-bright">{t.hero.title}</span>
-              <br />
-              <span className="text-cosmic-gradient">{t.hero.subtitle}</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-['Manrope'] font-bold mb-6 sm:mb-8 leading-tight">
+              <span className="text-cosmic-bright block">{t.hero.title}</span>
+              <span className="text-cosmic-gradient block mt-2">{t.hero.subtitle}</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-2">
               {t.hero.description}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 px-4">
               <button
-                className="cosmic-button px-10 py-5 text-white text-lg font-bold rounded-2xl flex items-center gap-3"
+                className="cosmic-button w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 text-white text-base sm:text-lg font-bold rounded-2xl flex items-center justify-center gap-3"
                 onClick={handleStartConsultation}
               >
                 ◈ {t.hero.startConsultation}
               </button>
 
               <button
-                className="cosmic-outline px-10 py-5 text-lg font-bold rounded-2xl flex items-center gap-3"
+                className="cosmic-outline w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold rounded-2xl flex items-center justify-center gap-3"
                 onClick={handleDailyHoroscope}
               >
                 ◆ {t.hero.dailyHoroscope}
@@ -898,11 +900,11 @@ const Index = () => {
               </p>
             </div>
             
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {astrologers.map((astrologer, index) => (
               <div
                 key={index}
-                className="cosmic-card rounded-2xl p-6 cursor-pointer fade-on-scroll relative overflow-hidden"
+                className="cosmic-card rounded-2xl p-4 sm:p-6 cursor-pointer fade-on-scroll relative overflow-hidden"
                 style={{animationDelay: `${index * 0.1}s`}}
                 onClick={() => handleAstrologerClick(astrologer)}
               >
@@ -910,24 +912,24 @@ const Index = () => {
                 <div className="absolute top-0 left-0 right-0 h-1 yellow-gradient"></div>
                 
                 <div className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full cosmic-orb flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-2xl">◈</span>
+                  <div className="w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full cosmic-orb flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl sm:text-2xl">◈</span>
                   </div>
 
-                  <h3 className="font-bold text-lg mb-2 text-cosmic-gradient">{astrologer.name}</h3>
-                  <p className="text-purple-300 text-sm mb-2">
-                    {astrologer.experience} {language === 'hi' ? 'साल अनुभव' : 'years experience'}
+                  <h3 className="font-bold text-base sm:text-lg mb-2 text-cosmic-gradient">{astrologer.name}</h3>
+                  <p className="text-purple-300 text-xs sm:text-sm mb-2">
+                    {astrologer.experience} {language === 'hi' ? 'साल अनुभव' : 'years exp.'}
                   </p>
-                  <p className="text-purple-400 text-sm font-semibold mb-3">{astrologer.specialty}</p>
-                  <p className="text-gray-400 text-xs mb-4">📍 {astrologer.location}</p>
+                  <p className="text-purple-400 text-xs sm:text-sm font-semibold mb-2 sm:mb-3">{astrologer.specialty}</p>
+                  <p className="text-gray-400 text-xs mb-3 sm:mb-4">📍 {astrologer.location}</p>
 
-                  <div className="flex items-center justify-center gap-1 mb-4">
-                    <span className="text-purple-400 text-lg">⭐</span>
-                    <span className="text-white text-sm font-bold">{astrologer.rating}</span>
+                  <div className="flex items-center justify-center gap-1 mb-3 sm:mb-4">
+                    <span className="text-purple-400 text-base sm:text-lg">⭐</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">{astrologer.rating}</span>
                 </div>
 
-                  <div className="flex items-center justify-center gap-2 mb-6">
-                    <div className={`w-3 h-3 rounded-full ${astrologer.isOnline ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+                  <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6">
+                    <div className={`w-2 sm:w-3 h-2 sm:h-3 rounded-full ${astrologer.isOnline ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
                     <span className={`text-xs font-medium ${astrologer.isOnline ? 'text-green-400' : 'text-gray-400'}`}>
                       {astrologer.isOnline ? 
                         (language === 'hi' ? 'उपलब्ध' : 'Available') : 
@@ -936,7 +938,7 @@ const Index = () => {
                     </span>
                   </div>
 
-                  <button className="w-full py-3 cosmic-button text-white text-sm font-bold rounded-xl">
+                  <button className="w-full py-2 sm:py-3 cosmic-button text-white text-xs sm:text-sm font-bold rounded-xl">
                     {astrologer.isOnline ? 
                       (language === 'hi' ? '✨ अभी बात करें' : '✨ Connect Now') : 
                       (language === 'hi' ? '📅 समय बुक करें' : '📅 Schedule')
@@ -950,47 +952,47 @@ const Index = () => {
         </section>
         
       {/* Services Section */}
-      <section className="py-20 px-6">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 fade-on-scroll">
-            <div className="text-3xl mb-4">💬 📞 📹</div>
-            <h2 className="text-4xl md:text-6xl font-['Manrope'] font-bold mb-6 text-yellow-bright">
+          <div className="text-center mb-12 sm:mb-16 fade-on-scroll">
+            <div className="text-2xl sm:text-3xl mb-4">💬 📞 📹</div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-['Manrope'] font-bold mb-4 sm:mb-6 text-yellow-bright">
               {t.services.title}
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-4">
               {t.services.subtitle}
               </p>
             </div>
             
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="cosmic-card rounded-2xl p-8 cursor-pointer fade-on-scroll relative overflow-hidden"
+                className="cosmic-card rounded-2xl p-6 sm:p-8 cursor-pointer fade-on-scroll relative overflow-hidden"
                 style={{animationDelay: `${index * 0.15}s`}}
                 onClick={() => handleServiceClick(service)}
               >
                 <div className="text-center">
-                  <div className="text-6xl mb-6 animate-subtle-float">{service.emoji}</div>
+                  <div className="text-4xl sm:text-5xl md:text-6xl mb-4 sm:mb-6 animate-subtle-float">{service.emoji}</div>
 
-                  <h3 className="font-['Manrope'] font-bold text-2xl mb-4 text-cosmic-gradient">
+                  <h3 className="font-['Manrope'] font-bold text-xl sm:text-2xl mb-3 sm:mb-4 text-cosmic-gradient">
                     {service.title}
                   </h3>
 
-                  <p className="text-gray-300 mb-6 text-base leading-relaxed">
+                  <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">
                     {service.description}
                   </p>
 
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-yellow-bright">
+                  <div className="mb-4 sm:mb-6">
+                    <span className="text-3xl sm:text-4xl font-bold text-yellow-bright">
                       {service.price}
                     </span>
-                    <span className="text-purple-300 text-sm">{service.duration}</span>
+                    <span className="text-purple-300 text-xs sm:text-sm block">{service.duration}</span>
                   </div>
 
-                  <div className="space-y-3 mb-8">
+                  <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                     {service.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3 text-gray-300 text-sm">
+                      <div key={idx} className="flex items-center gap-2 sm:gap-3 text-gray-300 text-xs sm:text-sm">
                         <span className="text-purple-400">✓</span>
                         <span>{feature}</span>
                       </div>
@@ -1043,13 +1045,13 @@ const Index = () => {
 
       {/* Modal System */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 animate-fade-in-up">
-          <div className={`cosmic-card rounded-2xl p-8 w-full mx-4 shadow-2xl border border-yellow-500/20 ${
-            modalType === 'activeCall' ? 'max-w-4xl' :
-            modalType === 'activeChat' ? 'max-w-lg' : 'max-w-md'
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 animate-fade-in-up p-4">
+          <div className={`cosmic-card rounded-2xl p-4 sm:p-6 md:p-8 w-full shadow-2xl border border-yellow-500/20 ${
+            modalType === 'activeCall' ? 'max-w-4xl max-h-[90vh] overflow-y-auto' :
+            modalType === 'activeChat' ? 'max-w-lg max-h-[80vh] overflow-y-auto' : 'max-w-md max-h-[90vh] overflow-y-auto'
           }`}>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-['Manrope'] font-bold text-cosmic-gradient">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-['Manrope'] font-bold text-cosmic-gradient">
                 {modalType === 'consultation' && `✨ ${t.modal.consultation}`}
                 {modalType === 'horoscope' && `⭐ ${t.modal.horoscope}`}
                 {modalType === 'astrologer' && `✨ ${language === 'hi' ? 'ज्योतिषी प्रोफाइल' : 'Astrologer Profile'}`}
@@ -1206,7 +1208,7 @@ const Index = () => {
                         type="text"
                         name="fullName"
                         placeholder={language === 'hi' ? 'पूरा नाम' : 'Full Name'}
-                        className="w-full p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-white placeholder-yellow-300 focus:border-yellow-400 focus:outline-none"
+                        className="w-full p-3 sm:p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-white placeholder-yellow-300 focus:border-yellow-400 focus:outline-none text-sm sm:text-base"
                         value={formData.fullName}
                         onChange={handleInputChange}
                         required
