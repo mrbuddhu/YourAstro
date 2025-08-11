@@ -891,7 +891,6 @@ const Index = () => {
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 fade-on-scroll">
-            <div className="text-3xl mb-4">⭐ ✨ 🔮 ✨ ⭐</div>
             <h2 className="text-4xl md:text-6xl font-['Manrope'] font-bold mb-6 text-yellow-bright">
               {t.experts.title}
             </h2>
@@ -955,7 +954,6 @@ const Index = () => {
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16 fade-on-scroll">
-            <div className="text-2xl sm:text-3xl mb-4">💬 📞 📹</div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-['Manrope'] font-bold mb-4 sm:mb-6 text-yellow-bright">
               {t.services.title}
             </h2>
